@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TM | مدیریت کارها، گزارش‌های روزانه و تعاملات</title>
+  <!-- Local Tailwind CSS Engine -->
+  <script src="vendor/tailwind.min.js"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+  <!-- Vazirmatn Persian Font -->
+  <link rel="stylesheet" href="vendor/vazirmatn/vazirmatn.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+  <!-- Local & CDN Fallback FontAwesome Icons -->
+  <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- Custom Style -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 antialiased min-h-screen flex flex-col transition-colors duration-300">
+
+  <!-- Header -->
+  <header class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 sticky top-0 z-30 shadow-xs transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-16 gap-2">
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-2.5 shrink-0">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-base sm:text-xl shadow-md shrink-0">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-black text-slate-900 dark:text-white text-base sm:text-lg leading-none">TM</h1>
+              <!-- Connection Dot on mobile -->
+              <span id="connection-status-dot" class="sm:hidden w-2 h-2 rounded-full bg-emerald-500" title="اتصال برقرار / حالت آفلاین"></span>
+            </div>
+            <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 hidden sm:block mt-0.5">مدیریت کارها، گزارش روزانه و تعاملات</p>
+          </div>
+        </div>
+
+        <!-- Desktop & Mobile Actions Cluster -->
+        <div class="flex items-center gap-1.5 sm:gap-2 justify-end">
+          <!-- Connection / Offline Badge (Desktop) -->
+          <div id="connection-status-badge" class="hidden sm:flex shrink-0 items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-help" title="درحال بررسی ارتباط">
+            <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+            <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">اتصال...</span>
+          </div>
+
+          <!-- Google Drive Sync Button & Badge -->
+          <div class="flex items-center shrink-0 bg-indigo-50/90 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 rounded-xl text-xs font-medium border border-indigo-200/80 dark:border-indigo-800/80 transition shadow-xs">
+            <button onclick="GDriveSync.sync()" title="همگام‌سازی اکنون با گوگل درایو شخصی" class="flex items-center gap-1.5 px-2.5 py-1.5 sm:py-2 cursor-pointer btn-tap">
+              <i id="gdrive-sync-icon" class="fa-solid fa-arrows-rotate text-indigo-600 dark:text-indigo-400 text-xs sm:text-sm"></i>
+              <span id="gdrive-status-text" class="hidden md:inline text-xs font-semibold">گوگل درایو</span>
+            </button>
+            <button onclick="GDriveSync.openSyncModal()" title="تنظیمات همگام‌سازی گوگل درایو" class="cursor-pointer text-indigo-500 hover:text-indigo-800 dark:hover:text-white px-2 py-1.5 sm:py-2 border-r border-indigo-200 dark:border-indigo-800 btn-tap">
+              <i class="fa-solid fa-gear text-xs"></i>
+            </button>
+          </div>
+
+          <!-- Current Date (Desktop only) -->
+          <div class="hidden xl:flex shrink-0 items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-xs font-medium border border-slate-200 dark:border-slate-700">
+            <i class="fa-solid fa-calendar-days text-indigo-600 dark:text-indigo-400"></i>
+            <span id="current-date-display">امروز: -</span>
+          </div>
+
+          <!-- Command Palette Trigger (Ctrl+K) -->
+          <button onclick="openCommandPalette()" title="جستجوی سریع و کلیدهای میانبر (Ctrl+K)" class="shrink-0 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl font-medium text-xs transition flex items-center gap-1.5 border border-slate-200 dark:border-slate-700 btn-tap cursor-pointer">
+            <i class="fa-solid fa-magnifying-glass text-indigo-600 dark:text-indigo-400"></i>
+            <span class="hidden md:inline">جستجو</span>
+            <kbd class="hidden md:inline-block bg-white dark:bg-slate-900 text-[10px] px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-600 font-mono">Ctrl K</kbd>
+          </button>
+
+          <!-- Dark Mode Toggle Button -->
+          <button onclick="toggleDarkMode()" id="btn-theme-toggle" title="تغییر تم حالت شب / روز" class="shrink-0 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 p-2 sm:px-2.5 sm:py-2 rounded-xl font-medium text-xs transition flex items-center justify-center border border-slate-200 dark:border-slate-700 btn-tap cursor-pointer">
+            <i id="theme-toggle-icon" class="fa-solid fa-moon text-amber-500 text-sm"></i>
+          </button>
+
+          <!-- Export CSV Dropdown (Desktop) -->
+          <div class="hidden sm:block relative group dropdown-container shrink-0">
+            <button onclick="toggleDropdown('dropdown-csv', event)" title="خروجی فایل Excel/CSV" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 sm:px-3 py-2 rounded-xl font-medium text-xs transition flex items-center gap-1.5 border border-slate-200 dark:border-slate-700 btn-tap cursor-pointer">
+              <i class="fa-solid fa-file-excel text-emerald-600 dark:text-emerald-400"></i>
+              <span class="hidden sm:inline">خروجی CSV</span>
+              <i class="fa-solid fa-chevron-down text-[10px] opacity-70"></i>
+            </button>
+            <div id="dropdown-csv" class="dropdown-menu absolute left-0 mt-1 w-44 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 hidden group-hover:block z-50 text-xs py-1">
+              <a href="#" onclick="exportToCSV('tasks'); closeAllDropdowns(); return false;" class="block px-3.5 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-indigo-500"></i> خروجی اکسل کارها
+              </a>
+              <a href="#" onclick="exportToCSV('reports'); closeAllDropdowns(); return false;" class="block px-3.5 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-file-lines text-emerald-500"></i> خروجی اکسل گزارش‌ها
+              </a>
+              <a href="#" onclick="exportToCSV('interactions'); closeAllDropdowns(); return false;" class="block px-3.5 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-address-book text-amber-500"></i> خروجی اکسل تعاملات
+              </a>
+            </div>
+          </div>
+
+          <!-- Backup Button (Desktop) -->
+          <button onclick="downloadBackup()" title="دریافت نسخه پشتیبان دیتابیس" class="hidden sm:flex shrink-0 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 sm:px-3 py-2 rounded-xl font-medium text-xs transition items-center gap-1.5 border border-slate-200 dark:border-slate-700 btn-tap cursor-pointer">
+            <i class="fa-solid fa-download text-indigo-600 dark:text-indigo-400"></i>
+            <span class="hidden sm:inline">نسخه پشتیبان</span>
+          </button>
+
+          <!-- Clear Data Button (Desktop) -->
+          <button onclick="openClearDataStep1()" title="پاکسازی تمامی اطلاعات" class="hidden sm:flex shrink-0 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 px-2.5 sm:px-3 py-2 rounded-xl font-medium text-xs transition items-center gap-1.5 border border-rose-200 dark:border-rose-800 btn-tap cursor-pointer">
+            <i class="fa-solid fa-trash-can text-rose-600 dark:text-rose-400"></i>
+            <span class="hidden sm:inline">پاکسازی</span>
+          </button>
+
+          <!-- Finish Work Period Button (Desktop) -->
+          <button onclick="openFinishPeriodModal()" title="اتمام دوره کاری (آرشیو کارها و تعاملات بجز روتین‌ها)" class="hidden sm:flex shrink-0 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 px-2.5 sm:px-3 py-2 rounded-xl font-medium text-xs transition items-center gap-1.5 border border-amber-200 dark:border-amber-800 btn-tap cursor-pointer">
+            <i class="fa-solid fa-flag-checkered text-amber-600 dark:text-amber-400"></i>
+            <span class="hidden sm:inline">اتمام دوره کاری</span>
+          </button>
+
+          <!-- Restore / Archive Box Button (Desktop) -->
+          <button onclick="openArchiveManagerModal()" title="مشاهده و بازگردانی موارد آرشیو شده" class="hidden sm:flex shrink-0 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 sm:px-3 py-2 rounded-xl font-medium text-xs transition items-center gap-1.5 border border-slate-200 dark:border-slate-700 btn-tap cursor-pointer relative">
+            <i class="fa-solid fa-box-archive text-indigo-600 dark:text-indigo-400"></i>
+            <span class="hidden sm:inline">صندوق آرشیو</span>
+            <span id="badge-header-archived-count" class="bg-indigo-600 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold hidden">۰</span>
+          </button>
+
+          <!-- Add New Button (Desktop) -->
+          <div class="hidden sm:block relative group dropdown-container shrink-0">
+            <button onclick="toggleDropdown('dropdown-add', event)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-2 rounded-xl font-medium text-xs sm:text-sm transition flex items-center gap-1.5 shadow-md shadow-indigo-500/20 btn-tap cursor-pointer">
+              <i class="fa-solid fa-plus"></i>
+              <span>افزودن جدید</span>
+              <i class="fa-solid fa-chevron-down text-xs opacity-80"></i>
+            </button>
+            <!-- Dropdown Menu -->
+            <div id="dropdown-add" class="dropdown-menu absolute left-0 mt-1 w-48 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 hidden group-hover:block z-50 py-1 shadow-xl">
+              <a href="#" onclick="openTaskModal(); closeAllDropdowns(); return false;" class="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-square-check text-indigo-600 dark:text-indigo-400"></i>
+                کار جدید
+              </a>
+              <a href="#" onclick="openRoutineModal(); closeAllDropdowns(); return false;" class="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-arrows-rotate text-purple-600 dark:text-purple-400"></i>
+                روتین روزانه جدید
+              </a>
+              <a href="#" onclick="openReportModal(); closeAllDropdowns(); return false;" class="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-file-pen text-emerald-600 dark:text-emerald-400"></i>
+                گزارش روزانه
+              </a>
+              <a href="#" onclick="openInteractionModal(); closeAllDropdowns(); return false;" class="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-comments text-amber-600 dark:text-amber-400"></i>
+                ثبت تعامل
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs (Desktop/Tablet) -->
+      <nav class="hidden sm:flex nav-tabs-container border-t border-slate-100 dark:border-slate-800/80 pt-2 pb-2.5">
+        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn active">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>داشبورد</span>
+        </button>
+        <button onclick="switchTab('tasks')" id="tab-btn-tasks" class="tab-btn">
+          <i class="fa-solid fa-list-ul"></i>
+          <span>کارها و وظایف</span>
+          <span id="badge-tasks-count" class="tab-badge bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs px-2 py-0.5 rounded-full font-bold">۰</span>
+        </button>
+        <button onclick="switchTab('routines')" id="tab-btn-routines" class="tab-btn">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span>روتین‌های روزانه</span>
+          <span id="badge-routines-count" class="tab-badge bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 text-xs px-2 py-0.5 rounded-full font-bold">۰</span>
+        </button>
+        <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn">
+          <i class="fa-solid fa-book-bookmark"></i>
+          <span>گزارش‌های روزانه</span>
+        </button>
+        <button onclick="switchTab('interactions')" id="tab-btn-interactions" class="tab-btn">
+          <i class="fa-solid fa-address-book"></i>
+          <span>ثبت تعاملات</span>
+          <span id="badge-followup-count" class="tab-badge bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 text-xs px-2 py-0.5 rounded-full font-bold hidden">۰</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+    <!-- 1. DASHBOARD VIEW -->
+    <section id="view-dashboard" class="space-y-8">
+
+      <!-- Overdue Tasks Alert Banner -->
+      <div id="dash-overdue-alert-container" class="hidden bg-gradient-to-r from-rose-900 to-red-800 text-white rounded-3xl p-5 shadow-lg border border-rose-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-glow">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-white/10 text-rose-200 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-white" id="dash-overdue-alert-title">شما کارهای سررسید گذشته (معوق) دارید!</h4>
+            <p class="text-xs text-rose-100/90 mt-0.5" id="dash-overdue-alert-sub">لطفاً نسبت به تعیین تکلیف یا تغییر تاریخ سررسید آن‌ها اقدام فرمایید.</p>
+          </div>
+        </div>
+        <div id="dash-overdue-actions" class="flex flex-wrap items-center gap-2 shrink-0">
+          <!-- Action Buttons -->
+        </div>
+      </div>
+
+      <!-- Modern Stat Cards (4 Cards Grid) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Card 1: Open Tasks -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-1.5 h-full bg-amber-500"></div>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1">کارهای باز و در جریان</span>
+              <h3 id="stat-pending-tasks" class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">۰</h3>
+              <p class="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-1 flex items-center gap-1">
+                <i class="fa-solid fa-clock"></i> در انتظار تکمیل
+              </p>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-square-check"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Urgent Tasks -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-1.5 h-full bg-rose-500"></div>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1">کارهای فوری 🔥</span>
+              <h3 id="stat-urgent-tasks" class="text-3xl font-black text-rose-600 dark:text-rose-400 tracking-tight">۰</h3>
+              <p class="text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-1 flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping inline-block"></span> نیاز به اقدام سریع
+              </p>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Total Reports -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-1.5 h-full bg-emerald-500"></div>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1">گزارش‌های کار ثبت شده</span>
+              <h3 id="stat-total-reports" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">۰</h3>
+              <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 flex items-center gap-1">
+                <i class="fa-solid fa-check-double"></i> ثبت عملکرد روزانه
+              </p>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-lines"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Pending Follow-ups -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-1.5 h-full bg-indigo-500"></div>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1">پیگیری تعاملات معوق</span>
+              <h3 id="stat-pending-followup" class="text-3xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">۰</h3>
+              <p class="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium mt-1 flex items-center gap-1">
+                <i class="fa-solid fa-phone"></i> یادآوری تماس و جلسات
+              </p>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-user-clock"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Panels Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Panel 1: Recent Pending Tasks -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col">
+          <div class="bg-slate-50/80 dark:bg-slate-700/40 px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-sm font-bold">
+                <i class="fa-solid fa-list-check"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-900 dark:text-white text-sm">کارهای دارای اولویت و باز</h3>
+                <p class="text-[11px] text-slate-400">کارهایی که باید سریع‌تر انجام و تعیین تکلیف شوند</p>
+              </div>
+            </div>
+            <button onclick="switchTab('tasks')" class="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 font-bold flex items-center gap-1 transition">
+              <span>مشاهده همه</span>
+              <i class="fa-solid fa-arrow-left text-[10px]"></i>
+            </button>
+          </div>
+          <div id="dash-recent-tasks" class="p-6 space-y-3 flex-1">
+            <p class="text-xs text-slate-400 text-center py-8">در حال بارگذاری...</p>
+          </div>
+        </div>
+
+        <!-- Panel 2: Recent Interactions & Follow-ups -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col">
+          <div class="bg-slate-50/80 dark:bg-slate-700/40 px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 flex items-center justify-center text-sm font-bold">
+                <i class="fa-solid fa-comments"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-900 dark:text-white text-sm">تعاملات و پیگیری‌های اخیر</h3>
+                <p class="text-[11px] text-slate-400">آخرین تماس‌ها، جلسات و وضعیت پاسخ‌دهی</p>
+              </div>
+            </div>
+            <button onclick="switchTab('interactions')" class="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-800 font-bold flex items-center gap-1 transition">
+              <span>مشاهده همه</span>
+              <i class="fa-solid fa-arrow-left text-[10px]"></i>
+            </button>
+          </div>
+          <div id="dash-recent-interactions" class="p-6 space-y-3 flex-1">
+            <p class="text-xs text-slate-400 text-center py-8">در حال بارگذاری...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TASKS VIEW -->
+    <section id="view-tasks" class="hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <!-- View Switcher Pills -->
+          <div class="flex items-center bg-slate-100 dark:bg-slate-700 p-1 rounded-xl border border-slate-200 dark:border-slate-600">
+            <button onclick="setTasksView('table')" id="btn-view-table" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm">
+              <i class="fa-solid fa-table-list"></i>
+              <span>جدول</span>
+            </button>
+            <button onclick="setTasksView('kanban')" id="btn-view-kanban" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900">
+              <i class="fa-solid fa-table-columns"></i>
+              <span>تخته کانبان</span>
+            </button>
+          </div>
+
+          <select id="sort-task-by" onchange="loadTasks()" class="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl px-3 py-2 outline-none focus:border-indigo-500 font-medium">
+            <option value="dueDate">مرتب‌سازی: تاریخ سررسید 📅</option>
+            <option value="priority">مرتب‌سازی: اولویت 🔥</option>
+          </select>
+
+          <select id="filter-task-status" onchange="loadTasks()" class="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl px-3 py-2 outline-none focus:border-indigo-500">
+            <option value="all">همه وضعیت‌ها</option>
+            <option value="pending">انجام نشده</option>
+            <option value="in_progress">در حال انجام</option>
+            <option value="completed">تکمیل شده</option>
+          </select>
+
+          <select id="filter-task-priority" onchange="loadTasks()" class="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl px-3 py-2 outline-none focus:border-indigo-500">
+            <option value="all">همه اولویت‌ها</option>
+            <option value="urgent">فوری 🔥</option>
+            <option value="high">بالا</option>
+            <option value="medium">متوسط</option>
+            <option value="low">کم</option>
+          </select>
+
+          <div class="relative flex-1 md:w-48">
+            <input type="text" id="search-task" onkeyup="loadTasks()" placeholder="جستجوی کار..." class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 text-xs sm:text-sm rounded-xl pr-9 pl-3 py-2 outline-none focus:border-indigo-500">
+            <i class="fa-solid fa-search absolute right-3 top-3 text-slate-400 text-sm"></i>
+          </div>
+        </div>
+
+        <button onclick="openTaskModal()" class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center justify-center gap-2 shadow-sm">
+          <i class="fa-solid fa-plus"></i>
+          ایجاد کار جدید
+        </button>
+      </div>
+
+      <!-- 1. Table View Container -->
+      <div id="tasks-table-view" class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-sm">
+            <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-semibold">
+              <tr>
+                <th class="py-3.5 px-4 text-center w-12">وضعیت</th>
+                <th class="py-3.5 px-4">عنوان کار</th>
+                <th class="py-3.5 px-4">پروژه / دسته‌بندی</th>
+                <th class="py-3.5 px-4 text-center">اولویت</th>
+                <th class="py-3.5 px-4 text-center">تاریخ سررسید</th>
+                <th class="py-3.5 px-4 text-center">وضعیت</th>
+                <th class="py-3.5 px-4 text-center">عملیات</th>
+              </tr>
+            </thead>
+            <tbody id="tasks-table-body" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- Dynamic Rows -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Tasks Pagination Container -->
+        <div id="tasks-pagination-container"></div>
+      </div>
+
+      <!-- 2. Kanban Board Container -->
+      <div id="tasks-kanban-view" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Column 1: Pending (To Do) -->
+        <div class="bg-slate-100/70 dark:bg-slate-800/60 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-700 space-y-3 flex flex-col min-h-[450px]" ondragover="allowKanbanDrop(event)" ondrop="handleKanbanDrop(event, 'pending')">
+          <div class="flex items-center justify-between px-2 pb-1 border-b border-slate-200 dark:border-slate-700">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+              <h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm">انجام نشده (To Do)</h3>
+            </div>
+            <span id="kanban-count-pending" class="bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 text-xs px-2 py-0.5 rounded-full font-bold">۰</span>
+          </div>
+          <div id="kanban-col-pending" class="space-y-3 flex-1 min-h-[380px]">
+            <!-- Dynamic Kanban Cards -->
+          </div>
+        </div>
+
+        <!-- Column 2: In Progress -->
+        <div class="bg-slate-100/70 dark:bg-slate-800/60 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-700 space-y-3 flex flex-col min-h-[450px]" ondragover="allowKanbanDrop(event)" ondrop="handleKanbanDrop(event, 'in_progress')">
+          <div class="flex items-center justify-between px-2 pb-1 border-b border-slate-200 dark:border-slate-700">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-sky-500"></span>
+              <h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm">در حال انجام (In Progress)</h3>
+            </div>
+            <span id="kanban-count-in_progress" class="bg-sky-100 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 text-xs px-2 py-0.5 rounded-full font-bold">۰</span>
+          </div>
+          <div id="kanban-col-in_progress" class="space-y-3 flex-1 min-h-[380px]">
+            <!-- Dynamic Kanban Cards -->
+          </div>
+        </div>
+
+        <!-- Column 3: Completed -->
+        <div class="bg-slate-100/70 dark:bg-slate-800/60 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-700 space-y-3 flex flex-col min-h-[450px]" ondragover="allowKanbanDrop(event)" ondrop="handleKanbanDrop(event, 'completed')">
+          <div class="flex items-center justify-between px-2 pb-1 border-b border-slate-200 dark:border-slate-700">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm">تکمیل شده (Done)</h3>
+            </div>
+            <span id="kanban-count-completed" class="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs px-2 py-0.5 rounded-full font-bold">۰</span>
+          </div>
+          <div id="kanban-col-completed" class="space-y-3 flex-1 min-h-[380px]">
+            <!-- Dynamic Kanban Cards -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ROUTINES VIEW (NEW TAB) -->
+    <section id="view-routines" class="hidden space-y-6">
+
+      <!-- Notification Banner -->
+      <div id="routine-notif-banner" class="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-white rounded-3xl p-5 shadow-lg border border-purple-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-300 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-bell"></i>
+          </div>
+          <div>
+            <h4 id="routine-notif-title" class="font-bold text-sm text-white">یادآوری خودکار و نوتیفیکیشن‌های روزانه 🔔</h4>
+            <p id="routine-notif-subtext" class="text-xs text-purple-200/90 mt-0.5">با فعال‌سازی دسترسی مرورگر، روتین‌های روزانه به صورت اعلان به شما یادآوری می‌شوند.</p>
+          </div>
+        </div>
+        <div id="routine-notif-actions" class="flex flex-wrap items-center gap-2 shrink-0">
+          <button onclick="requestNotificationPermission()" id="btn-request-notif" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md">
+            <i class="fa-solid fa-bell"></i>
+            <span>فعال‌سازی نوتیفیکیشن مرورگر</span>
+          </button>
+          <button onclick="openNotificationGuideModal()" id="btn-notif-guide" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-xl text-xs font-medium transition flex items-center gap-1.5 border border-white/20">
+            <i class="fa-solid fa-circle-question"></i>
+            <span>راهنمای موبایل و آیفون</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Routines Top Header & Stats -->
+      <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row items-center justify-between gap-5">
+        <div class="flex items-center gap-4 w-full md:w-auto">
+          <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl font-bold">
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-base">روتین‌ها و چک‌لیست روزانه</h3>
+            <div class="flex items-center gap-3 mt-1 text-xs text-slate-500 dark:text-slate-400">
+              <span>تعداد کل: <strong id="routine-stat-total" class="text-slate-800 dark:text-slate-200">۰</strong></span>
+              <span>•</span>
+              <span>تکمیل امروز: <strong id="routine-stat-completed" class="text-purple-600 dark:text-purple-400">۰</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full md:w-64 bg-slate-100 dark:bg-slate-700 p-3 rounded-2xl border border-slate-200 dark:border-slate-600 space-y-1.5">
+          <div class="flex items-center justify-between text-xs font-semibold">
+            <span class="text-slate-600 dark:text-slate-300">پیشرفت امروز</span>
+            <span id="routine-progress-percent" class="text-purple-600 dark:text-purple-400 font-bold">۰٪</span>
+          </div>
+          <div class="w-full bg-slate-200 dark:bg-slate-600 h-2.5 rounded-full overflow-hidden">
+            <div id="routine-progress-bar" class="bg-gradient-to-r from-purple-500 to-indigo-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+          <button onclick="sendTestNotification()" title="ارسال نوتیفیکیشن دسکتاپ آزمایشی" class="bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-vial text-purple-600 dark:text-purple-400"></i>
+            <span>تست نوتیفیکیشن 🔔</span>
+          </button>
+          <button onclick="openRoutineModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition flex items-center justify-center gap-2 shadow-sm">
+            <i class="fa-solid fa-plus"></i>
+            ایجاد روتین جدید
+          </button>
+        </div>
+      </div>
+
+      <!-- Routines Grid Container -->
+      <div id="routines-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <p class="text-xs text-slate-400 text-center py-12 col-span-full">در حال بارگذاری روتین‌ها...</p>
+      </div>
+
+      <!-- Routines Pagination Container -->
+      <div id="routines-pagination-container"></div>
+    </section>
+
+    <!-- 4. DAILY REPORTS VIEW -->
+    <section id="view-reports" class="hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3 w-full md:w-auto">
+          <div class="relative flex-1 md:w-64">
+            <input type="text" id="search-report" onkeyup="loadReports()" placeholder="جستجو در گزارش‌ها..." class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 text-sm rounded-xl pr-9 pl-3 py-2 outline-none focus:border-emerald-500">
+            <i class="fa-solid fa-search absolute right-3 top-3 text-slate-400 text-sm"></i>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5 w-full md:w-auto">
+          <button onclick="openBlockersModal()" class="w-full md:w-auto bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 shadow-sm cursor-pointer" title="نمایش و فیلتر چالش‌ها و موانع در بازه زمانی انتخابی">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
+            <span>تمام چالش‌ها و موانع</span>
+          </button>
+          <button onclick="openReportModal()" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center justify-center gap-2 shadow-sm">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>ثبت گزارش کار امروز</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-sm">
+            <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-semibold">
+              <tr>
+                <th class="py-3.5 px-4">تاریخ (شمسی)</th>
+                <th class="py-3.5 px-4">خلاصه اقدامات</th>
+                <th class="py-3.5 px-4 text-center">امتیاز</th>
+                <th class="py-3.5 px-4 text-center">عملیات</th>
+              </tr>
+            </thead>
+            <tbody id="reports-table-body" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- Dynamic Rows -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Reports Pagination Container -->
+        <div id="reports-pagination-container"></div>
+      </div>
+    </section>
+
+    <!-- 5. INTERACTIONS VIEW -->
+    <section id="view-interactions" class="hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <select id="filter-interaction-type" onchange="loadInteractions()" class="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm rounded-xl px-3 py-2 outline-none focus:border-amber-500">
+            <option value="all">همه انواع تعاملات</option>
+            <option value="meeting">جلسه 🤝</option>
+            <option value="call">تماس تلفنی 📞</option>
+            <option value="message">پیام/چت 💬</option>
+            <option value="email">ایمیل ✉️</option>
+            <option value="in_person">دیدار حضوری 🚶‍♂️</option>
+          </select>
+
+          <!-- Outcome Status Filter -->
+          <select id="filter-interaction-outcome" onchange="loadInteractions()" class="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm rounded-xl px-3 py-2 outline-none focus:border-amber-500">
+            <option value="all">همه نتایج / پاسخ‌ها</option>
+            <option value="answered">پاسخ داد ✅</option>
+            <option value="no_answer">پاسخ نداد 🚫</option>
+            <option value="awaiting">منتظر پاسخ ⏳</option>
+            <option value="successful">موفق / توافق 🤝</option>
+            <option value="cancelled">عدم تمایل / رد ❌</option>
+          </select>
+
+          <select id="filter-interaction-followup" onchange="loadInteractions()" class="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm rounded-xl px-3 py-2 outline-none focus:border-amber-500">
+            <option value="all">همه پیگیری‌ها</option>
+            <option value="pending">نیازمند پیگیری ⏳</option>
+          </select>
+
+          <div class="relative flex-1 md:w-48">
+            <input type="text" id="search-interaction" onkeyup="loadInteractions()" placeholder="جستجوی شخص، موضوع..." class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 text-sm rounded-xl pr-9 pl-3 py-2 outline-none focus:border-amber-500">
+            <i class="fa-solid fa-search absolute right-3 top-3 text-slate-400 text-sm"></i>
+          </div>
+        </div>
+
+        <button onclick="openInteractionModal()" class="w-full md:w-auto bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-user-plus"></i>
+          ثبت تعامل جدید
+        </button>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-sm">
+            <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-semibold">
+              <tr>
+                <th class="py-3.5 px-4">نوع</th>
+                <th class="py-3.5 px-4">مخاطب / شرکت</th>
+                <th class="py-3.5 px-4">موضوع گفتگو</th>
+                <th class="py-3.5 px-4 text-center">تاریخ</th>
+                <th class="py-3.5 px-4 text-center">نتیجه / پاسخ</th>
+                <th class="py-3.5 px-4 text-center">پیگیری</th>
+                <th class="py-3.5 px-4 text-center">عملیات</th>
+              </tr>
+            </thead>
+            <tbody id="interactions-table-body" class="divide-y divide-slate-100 dark:divide-slate-700">
+              <!-- Dynamic Rows -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Interactions Pagination Container -->
+        <div id="interactions-pagination-container"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODALS -->
+
+  <!-- INTERACTION DETAILS VIEW MODAL -->
+  <div id="modal-interaction-view" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+      <div class="bg-amber-50 px-6 py-4 border-b border-amber-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div id="view-int-icon" class="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold">
+            <i class="fa-solid fa-handshake"></i>
+          </div>
+          <div>
+            <h3 id="view-int-contact" class="font-bold text-slate-800">جزئیات تعامل</h3>
+            <span id="view-int-company" class="text-xs text-slate-500"></span>
+          </div>
+        </div>
+        <button onclick="closeInteractionViewModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="p-6 space-y-4 text-sm">
+        <div class="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+          <div>
+            <span class="text-slate-400 block mb-0.5">نوع تعامل:</span>
+            <strong id="view-int-type" class="text-slate-800"></strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block mb-0.5">تاریخ:</span>
+            <strong id="view-int-date" class="text-slate-800"></strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block mb-0.5">نتیجه / پاسخ:</span>
+            <span id="view-int-outcome" class="badge"></span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-700 mb-1 text-xs">موضوع گفتگو:</h4>
+          <p id="view-int-subject" class="text-slate-800 font-semibold bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs"></p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-700 mb-1 text-xs">یادداشت‌ها و جزئیات:</h4>
+          <p id="view-int-notes" class="text-slate-600 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs leading-relaxed whitespace-pre-line"></p>
+        </div>
+
+        <div id="view-int-followup-box" class="p-3 bg-amber-50 rounded-xl border border-amber-200 flex items-center justify-between text-xs">
+          <span class="font-bold text-amber-900" id="view-int-followup-text"></span>
+          <button id="btn-view-int-toggle-followup" class="px-3 py-1 bg-amber-600 text-white font-semibold rounded-lg text-xs">تغییر وضعیت پیگیری</button>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <button onclick="closeInteractionViewModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-200">بستن</button>
+        <button id="btn-view-int-edit" class="px-4 py-2 rounded-xl text-sm font-medium bg-amber-600 hover:bg-amber-700 text-white flex items-center gap-2">
+          <i class="fa-solid fa-pen"></i>
+          <span>ویرایش تعامل</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASK DETAILS VIEW MODAL -->
+  <div id="modal-task-view" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+      <div class="bg-indigo-50 px-6 py-4 border-b border-indigo-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold">
+            <i class="fa-solid fa-square-check"></i>
+          </div>
+          <div>
+            <h3 id="view-task-title" class="font-bold text-slate-800">جزئیات کار</h3>
+            <div class="flex items-center gap-2 mt-0.5">
+              <span id="view-task-priority" class="badge"></span>
+              <span id="view-task-status" class="badge"></span>
+            </div>
+          </div>
+        </div>
+        <button onclick="closeTaskViewModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="p-6 space-y-4 text-sm">
+        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs text-slate-600">
+          <div>
+            <span class="text-slate-400 block mb-0.5">پروژه / دسته‌بندی:</span>
+            <strong id="view-task-category" class="text-slate-800 font-semibold"></strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block mb-0.5">تاریخ سررسید (شمسی):</span>
+            <strong id="view-task-duedate" class="text-slate-800 font-semibold"></strong>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-700 mb-1.5 text-xs">توضیحات کار:</h4>
+          <p id="view-task-description" class="text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs leading-relaxed whitespace-pre-line"></p>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <button onclick="closeTaskViewModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-200">بستن</button>
+        <button id="btn-view-task-edit" class="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2">
+          <i class="fa-solid fa-pen"></i>
+          <span>ویرایش کار</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW REPORT DETAILS MODAL -->
+  <div id="modal-report-view" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden border border-slate-100 max-h-[90vh] overflow-y-auto">
+      <div class="bg-emerald-50 px-6 py-4 border-b border-emerald-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
+            <i class="fa-regular fa-file-lines"></i>
+          </div>
+          <div>
+            <h3 id="view-report-date-title" class="font-bold text-slate-800">جزئیات گزارش روزانه</h3>
+            <span id="view-report-rating-stars" class="text-amber-400 text-xs"></span>
+          </div>
+        </div>
+        <button onclick="closeReportViewModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+          <h4 class="font-bold text-slate-700 mb-2 text-xs flex items-center gap-2">
+            <i class="fa-solid fa-check text-emerald-600"></i> خلاصه‌ی اقدامات و کارهای انجام شده
+          </h4>
+          <p id="view-report-summary" class="text-slate-700 whitespace-pre-line text-sm leading-relaxed"></p>
+        </div>
+
+        <div id="view-report-achievements-box" class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
+          <h4 class="font-bold text-emerald-800 mb-2 text-xs flex items-center gap-2">
+            <i class="fa-solid fa-trophy text-emerald-600"></i> دستاوردها و خروجی‌ها
+          </h4>
+          <p id="view-report-achievements" class="text-emerald-900 whitespace-pre-line text-sm leading-relaxed"></p>
+        </div>
+
+        <div id="view-report-blockers-box" class="bg-rose-50/50 p-4 rounded-xl border border-rose-100">
+          <h4 class="font-bold text-rose-800 mb-2 text-xs flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> چالش‌ها و موانع
+          </h4>
+          <p id="view-report-blockers" class="text-rose-900 whitespace-pre-line text-sm leading-relaxed"></p>
+        </div>
+
+        <div id="view-report-nextplan-box" class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+          <h4 class="font-bold text-indigo-800 mb-2 text-xs flex items-center gap-2">
+            <i class="fa-solid fa-compass text-indigo-600"></i> برنامه‌ی روز بعد
+          </h4>
+          <p id="view-report-nextplan" class="text-indigo-900 whitespace-pre-line text-sm leading-relaxed"></p>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <button onclick="closeReportViewModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-200">بستن</button>
+        <button id="btn-view-report-edit" class="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2">
+          <i class="fa-solid fa-pen"></i>
+          <span>ویرایش گزارش</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEAR DATA STEP 1 MODAL -->
+  <div id="modal-clear-step1" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-rose-100 p-6 space-y-4">
+      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xl mx-auto">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="text-center space-y-2">
+        <h3 class="font-bold text-slate-900 text-lg">تایید مرحله اول: پاکسازی اطلاعات</h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          آیا مطمئن هستید که قصد دارید تمامی داده‌های برنامه را پاکسازی کنید؟ 
+          <br><span class="text-rose-600 font-semibold">این عمل غیرقابل بازگشت است!</span>
+        </p>
+      </div>
+      <div class="flex justify-center gap-3 pt-2">
+        <button onclick="closeClearDataModals()" class="w-1/2 py-2.5 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200">انصراف</button>
+        <button onclick="openClearDataStep2()" class="w-1/2 py-2.5 rounded-xl text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 shadow-sm flex items-center justify-center gap-2">
+          <span>مرحله بعد</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEAR DATA STEP 2 MODAL -->
+  <div id="modal-clear-step2" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-rose-200 p-6 space-y-4">
+      <div class="w-12 h-12 rounded-full bg-rose-600 text-white flex items-center justify-center text-xl mx-auto shadow-md">
+        <i class="fa-solid fa-skull-crossbones"></i>
+      </div>
+      <div class="text-center space-y-2">
+        <h3 class="font-bold text-rose-600 text-lg">تایید نهایی مرحله دوم</h3>
+        <p class="text-xs text-slate-600">
+          برای تایید نهایی و حذف کامل تمام اطلاعات دیتابیس، عبارت <strong class="text-rose-700 bg-rose-50 px-2 py-0.5 rounded">پاکسازی</strong> را در کادر زیر وارد کنید:
+        </p>
+      </div>
+
+      <div>
+        <input type="text" id="input-clear-confirm" onkeyup="checkClearInput()" placeholder="عبارت پاکسازی را تایپ کنید..." class="w-full text-center bg-rose-50/50 border border-rose-300 text-slate-800 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-rose-600 font-bold">
+      </div>
+
+      <div class="flex justify-center gap-3 pt-2">
+        <button onclick="closeClearDataModals()" class="w-1/2 py-2.5 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200">انصراف</button>
+        <button id="btn-final-clear" disabled onclick="executeClearData()" class="w-1/2 py-2.5 rounded-xl text-sm font-medium text-white bg-rose-300 cursor-not-allowed transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-trash"></i>
+          <span>حذف قطعی همه داده‌ها</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Create/Edit Modal -->
+  <div id="modal-task" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+      <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 id="modal-task-title" class="font-bold text-slate-800">ایجاد کار جدید</h3>
+        <button onclick="closeTaskModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="form-task" onsubmit="saveTask(event)" class="p-6 space-y-4">
+        <input type="hidden" id="task-id">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">عنوان کار <span class="text-rose-500">*</span></label>
+          <input type="text" id="task-title" required placeholder="مثلاً: طراحی داشبورد پروژه TM" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">توضیحات</label>
+          <textarea id="task-description" rows="3" placeholder="توضیحات تکمیلی..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-500"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">اولویت</label>
+            <select id="task-priority" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-500">
+              <option value="medium">متوسط</option>
+              <option value="low">کم</option>
+              <option value="high">بالا</option>
+              <option value="urgent">فوری 🔥</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">وضعیت</label>
+            <select id="task-status" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-500">
+              <option value="pending">انجام نشده</option>
+              <option value="in_progress">در حال انجام</option>
+              <option value="completed">تکمیل شده</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">پروژه / دسته‌بندی</label>
+            <input type="text" id="task-category" list="task-category-list" placeholder="نام پروژه یا دسته‌بندی..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-500">
+            <datalist id="task-category-list"></datalist>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">تاریخ سررسید (شمسی) <span class="text-slate-400 font-normal">(اختیاری)</span></label>
+            <input type="text" id="task-due-date" onclick="openDatePicker(this)" readonly placeholder="انتخاب تاریخ 📅" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-500 cursor-pointer">
+          </div>
+        </div>
+        <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
+          <button type="button" onclick="closeTaskModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100">انصراف</button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">ذخیره کار</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Routine Create/Edit Modal -->
+  <div id="modal-routine" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+      <div class="bg-purple-50 px-6 py-4 border-b border-purple-100 flex items-center justify-between">
+        <h3 id="modal-routine-title" class="font-bold text-purple-900">ایجاد روتین روزانه جدید</h3>
+        <button onclick="closeRoutineModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="form-routine" onsubmit="saveRoutine(event)" class="p-6 space-y-4">
+        <input type="hidden" id="routine-id">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">عنوان روتین <span class="text-rose-500">*</span></label>
+          <input type="text" id="routine-title" required placeholder="مثلاً: بررسی و پاسخ به ایمیل‌ها" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-purple-500">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ساعت یادآوری (۲۴ ساعته ⏰)</label>
+            <input type="time" id="routine-time" value="09:00" step="60" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-purple-500 font-mono font-bold">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">دسته‌بندی</label>
+            <input type="text" id="routine-category" list="task-category-list" placeholder="مثلاً: کاری، شخصی..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-purple-500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">توضیحات و راهنما</label>
+          <textarea id="routine-notes" rows="2" placeholder="جزئیات این روتین..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-purple-500"></textarea>
+        </div>
+        <div class="pt-2">
+          <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+            <input type="checkbox" id="routine-active" checked class="rounded border-slate-300 text-purple-600 focus:ring-purple-500">
+            روتین فعال است (شامل نوتیفیکیشن روزانه شود)
+          </label>
+        </div>
+        <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
+          <button type="button" onclick="closeRoutineModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100">انصراف</button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-sm font-medium bg-purple-600 hover:bg-purple-700 text-white shadow-sm">ذخیره روتین</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Report Create/Edit Modal -->
+  <div id="modal-report" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden border border-slate-100 max-h-[90vh] overflow-y-auto">
+      <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 id="modal-report-title" class="font-bold text-slate-800">ثبت گزارش روزانه</h3>
+        <button onclick="closeReportModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="form-report" onsubmit="saveReport(event)" class="p-6 space-y-4">
+        <input type="hidden" id="report-id">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">تاریخ (شمسی)</label>
+            <input type="text" id="report-date" onclick="openDatePicker(this)" readonly placeholder="انتخاب تاریخ 📅" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-emerald-500 cursor-pointer">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">امتیاز عملکرد امروز (۱ تا ۵)</label>
+            <select id="report-rating" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-emerald-500">
+              <option value="5">⭐⭐⭐⭐⭐ (عالی)</option>
+              <option value="4">⭐⭐⭐⭐ (خوب)</option>
+              <option value="3">⭐⭐⭐ (متوسط)</option>
+              <option value="2">⭐⭐ (نیاز به بهبود)</option>
+              <option value="1">⭐ (ضعیف)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">خلاصه اقدامات <span class="text-rose-500">*</span></label>
+          <textarea id="report-summary" required rows="3" placeholder="مهم‌ترین کارهایی که امروز انجام دادید..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-emerald-500"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">دستاوردها و خروجی‌های اصلی</label>
+          <textarea id="report-achievements" rows="2" placeholder="نتایج قابل توجه کارها..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-emerald-500"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">چالش‌ها و موانع</label>
+          <textarea id="report-blockers" rows="2" placeholder="مشکلات یا موانعی که با آن‌ها روبرو شدید..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-emerald-500"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">برنامه و اهداف روز بعد</label>
+          <textarea id="report-nextplan" rows="2" placeholder="کارهایی که فردا اولویت دارند..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-emerald-500"></textarea>
+        </div>
+        <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
+          <button type="button" onclick="closeReportModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100">انصراف</button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">ذخیره گزارش</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Interaction Create/Edit Modal -->
+  <div id="modal-interaction" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden border border-slate-100 max-h-[90vh] overflow-y-auto">
+      <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 id="modal-interaction-title" class="font-bold text-slate-800">ثبت تعامل جدید</h3>
+        <button onclick="closeInteractionModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="form-interaction" onsubmit="saveInteraction(event)" class="p-6 space-y-4">
+        <input type="hidden" id="interaction-id">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">نام مخاطب/شخص <span class="text-rose-500">*</span></label>
+            <input type="text" id="interaction-contact" required placeholder="مثلاً: علی محمدی" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">شرکت / سازمان</label>
+            <input type="text" id="interaction-company" placeholder="مثلاً: شرکت فناوری پارت" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-amber-500">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">نوع تعامل</label>
+            <select id="interaction-type" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-amber-500">
+              <option value="call">تماس تلفنی 📞</option>
+              <option value="message">پیام/چت 💬</option>
+              <option value="meeting">جلسه 🤝</option>
+              <option value="email">ایمیل ✉️</option>
+              <option value="in_person">دیدار حضوری 🚶‍♂️</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">نتیجه / وضعیت پاسخ</label>
+            <select id="interaction-outcome" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-amber-500 font-medium">
+              <option value="answered">پاسخ داد ✅</option>
+              <option value="no_answer">پاسخ نداد 🚫</option>
+              <option value="awaiting">منتظر پاسخ ⏳</option>
+              <option value="successful">موفق / توافق 🤝</option>
+              <option value="cancelled">عدم تمایل / رد ❌</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">تاریخ تعامل</label>
+            <input type="text" id="interaction-date" onclick="openDatePicker(this)" readonly placeholder="انتخاب تاریخ 📅" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-amber-500 cursor-pointer">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">موضوع گفتگو</label>
+            <input type="text" id="interaction-subject" placeholder="مثلاً: هماهنگی قرارداد" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-amber-500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">خلاصه نکات و توضیحات</label>
+          <textarea id="interaction-notes" rows="3" placeholder="نکات کلیدی مطرح شده در این تعامل..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none focus:border-amber-500"></textarea>
+        </div>
+        <div class="p-3 bg-amber-50/60 rounded-xl border border-amber-100 space-y-2">
+          <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-amber-900">
+            <input type="checkbox" id="interaction-followup-check" onchange="toggleFollowUpFields()" class="rounded border-slate-300 text-amber-600 focus:ring-amber-500">
+            این تعامل نیازمند پیگیری بعدی است
+          </label>
+          <div id="followup-fields" class="hidden grid grid-cols-2 gap-3 pt-2">
+            <div>
+              <label class="block text-xs text-amber-800 mb-1">تاریخ پیگیری (شمسی)</label>
+              <input type="text" id="interaction-followup-date" onclick="openDatePicker(this)" readonly placeholder="انتخاب تاریخ 📅" class="w-full bg-white border border-amber-200 rounded-lg px-2.5 py-1.5 text-xs outline-none cursor-pointer">
+            </div>
+            <div>
+              <label class="block text-xs text-amber-800 mb-1">وضعیت پیگیری</label>
+              <select id="interaction-followup-status" class="w-full bg-white border border-amber-200 rounded-lg px-2.5 py-1.5 text-xs outline-none">
+                <option value="pending">در انتظار پیگیری ⏳</option>
+                <option value="done">انجام شد ✅</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
+          <button type="button" onclick="closeInteractionModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100">انصراف</button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-sm font-medium bg-amber-600 hover:bg-amber-700 text-white shadow-sm">ذخیره تعامل</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JALALI DATEPICKER MODAL -->
+  <div id="modal-datepicker" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-center justify-center hidden p-4" onclick="closeDatePickerOnOverlay(event)">
+    <div class="bg-white dark:bg-slate-800 w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 p-5 space-y-4" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+        <button type="button" onclick="dpPrevMonth()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-600 dark:text-slate-200 flex items-center justify-center text-sm transition">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <div class="flex items-center gap-2 font-bold text-sm text-slate-800 dark:text-white">
+          <select id="dp-month-select" onchange="dpChangeMonthYear()" class="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 rounded-lg px-2 py-1 outline-none text-xs font-bold">
+          </select>
+          <select id="dp-year-select" onchange="dpChangeMonthYear()" class="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 rounded-lg px-2 py-1 outline-none text-xs font-bold">
+          </select>
+        </div>
+        <button type="button" onclick="dpNextMonth()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-600 dark:text-slate-200 flex items-center justify-center text-sm transition">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-7 gap-1 text-center font-bold text-xs text-slate-400">
+        <div>ش</div><div>ی</div><div>د</div><div>س</div><div>چ</div><div>پ</div><div>ج</div>
+      </div>
+
+      <div id="dp-days-grid" class="grid grid-cols-7 gap-1 text-center text-xs">
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs font-semibold">
+        <button type="button" onclick="dpSelectToday()" class="text-indigo-600 dark:text-indigo-400 hover:underline">انتخاب امروز</button>
+        <button type="button" onclick="dpClear()" class="text-rose-500 hover:underline">پاک کردن</button>
+        <button type="button" onclick="closeDatePicker()" class="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg hover:bg-slate-200">بستن</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINISH WORK PERIOD MODAL -->
+  <div id="modal-finish-period" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-amber-200 dark:border-amber-700/60 p-6 space-y-4">
+      <div class="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl mx-auto shadow-sm">
+        <i class="fa-solid fa-flag-checkered"></i>
+      </div>
+      <div class="text-center space-y-2">
+        <h3 class="font-bold text-slate-900 dark:text-white text-lg">اتمام دوره کاری و پاکسازی محیط</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+          با تایید این عملیات، تمامی تسک‌ها و تعاملات جاری <span class="font-bold text-amber-600 dark:text-amber-400">آرشیو</span> شده و محیط کاری شما برای دوره جدید کاملاً تمیز و مرتب می‌گردد.
+          <br>
+          <span class="text-purple-600 dark:text-purple-400 font-semibold">✨ روتین‌های روزانه شما بدون تغییر حفظ خواهند شد.</span>
+        </p>
+      </div>
+
+      <div class="space-y-1.5 pt-1">
+        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">عنوان یا نام دوره کاری <span class="text-slate-400 font-normal">(اختیاری)</span></label>
+        <input type="text" id="input-period-title" placeholder="مثلاً: اسپرینت ۲۲ یا شهریور ماه" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 text-xs sm:text-sm rounded-xl px-3 py-2.5 outline-none focus:border-amber-500 font-medium">
+      </div>
+
+      <div class="bg-amber-50/60 dark:bg-amber-950/30 p-3 rounded-2xl border border-amber-200/60 dark:border-amber-800/40 text-[11px] text-amber-800 dark:text-amber-300 flex items-start gap-2">
+        <i class="fa-solid fa-circle-info mt-0.5 shrink-0 text-amber-600"></i>
+        <span>شما هر زمان می‌توانید با زدن دکمه «صندوق آرشیو»، تمام یا بخشی از اطلاعات آرشیو شده را مشاهده یا بازگردانی فرمایید.</span>
+      </div>
+
+      <div class="flex justify-center gap-3 pt-2">
+        <button type="button" onclick="closeFinishPeriodModal()" class="w-1/2 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition">انصراف</button>
+        <button type="button" onclick="executeFinishPeriod()" class="w-1/2 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-amber-600 hover:bg-amber-700 shadow-md flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-check"></i>
+          <span>تایید و اتمام دوره</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARCHIVE MANAGER & RESTORE MODAL -->
+  <div id="modal-archive-manager" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-[90vh] flex flex-col">
+      <!-- Header -->
+      <div class="bg-slate-50 dark:bg-slate-700/50 px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg font-bold shadow-sm">
+            <i class="fa-solid fa-box-archive"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-base">صندوق آرشیو و بازگردانی دوره‌های کاری</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">مشاهده و بازگردانی تسک‌ها و تعاملات دوره‌های گذشته</p>
+          </div>
+        </div>
+        <button onclick="closeArchiveManagerModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Action Bar & Tabs inside modal -->
+      <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-800">
+        <div class="flex items-center bg-slate-100 dark:bg-slate-700 p-1 rounded-xl border border-slate-200 dark:border-slate-600 w-full sm:w-auto">
+          <button id="tab-archive-tasks-btn" onclick="switchArchiveTab('tasks')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm flex-1 sm:flex-none justify-center">
+            <i class="fa-solid fa-list-check"></i>
+            <span>کارهای آرشیو شده</span>
+            <span id="badge-archive-tasks-count" class="bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-[10px] px-1.5 py-0.5 rounded-full font-bold">۰</span>
+          </button>
+          <button id="tab-archive-interactions-btn" onclick="switchArchiveTab('interactions')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex-1 sm:flex-none justify-center">
+            <i class="fa-solid fa-comments"></i>
+            <span>تعاملات آرشیو شده</span>
+            <span id="badge-archive-inter-count" class="bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 text-[10px] px-1.5 py-0.5 rounded-full font-bold">۰</span>
+          </button>
+        </div>
+
+        <button onclick="restoreAllArchived()" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>بازگردانی همه موارد به محیط فعال</span>
+        </button>
+      </div>
+
+      <!-- Search in archive -->
+      <div class="px-4 pt-3 pb-1">
+        <div class="relative">
+          <input type="text" id="search-archive-input" onkeyup="filterArchivedItems()" placeholder="جستجو در موارد آرشیو شده..." class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 text-xs rounded-xl pr-8 pl-3 py-2 outline-none focus:border-indigo-500">
+          <i class="fa-solid fa-search absolute right-3 top-2.5 text-slate-400 text-xs"></i>
+        </div>
+      </div>
+
+      <!-- Content list area -->
+      <div id="archive-list-container" class="p-4 space-y-2.5 overflow-y-auto flex-1 min-h-[260px] max-h-[420px]">
+        <!-- Dynamic list -->
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-3.5 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs">
+        <span id="archive-status-text" class="text-slate-500 dark:text-slate-400">مجموع موارد آرشیو شده: ۰</span>
+        <button onclick="closeArchiveManagerModal()" class="px-4 py-1.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600">بستن</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALL CHALLENGES & BLOCKERS MODAL -->
+  <div id="modal-blockers" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white dark:bg-slate-800 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-[92vh] flex flex-col">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-rose-50 to-orange-50 dark:from-rose-950/40 dark:to-slate-800 px-6 py-4 border-b border-rose-100 dark:border-rose-900/40 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center text-lg font-bold shadow-md">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-base">پایش تمام چالش‌ها و موانع کاری</h3>
+            <p class="text-xs text-rose-700 dark:text-rose-300">بررسی موانع ثبت‌شده در گزارش‌های روزانه بر اساس بازه تاریخ شمسی</p>
+          </div>
+        </div>
+        <button onclick="closeBlockersModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Date Range & Filters Bar -->
+      <div class="p-4 bg-slate-50/70 dark:bg-slate-700/30 border-b border-slate-200 dark:border-slate-700 space-y-3">
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- From Date -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">از تاریخ:</span>
+            <input type="text" id="blockers-from-date" onclick="openDatePicker(this)" readonly placeholder="شروع بازه 📅" class="bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 text-xs rounded-xl px-3 py-1.5 outline-none focus:border-rose-500 cursor-pointer w-28 text-center font-bold">
+          </div>
+
+          <!-- To Date -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">تا تاریخ:</span>
+            <input type="text" id="blockers-to-date" onclick="openDatePicker(this)" readonly placeholder="پایان بازه 📅" class="bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 text-xs rounded-xl px-3 py-1.5 outline-none focus:border-rose-500 cursor-pointer w-28 text-center font-bold">
+          </div>
+
+          <!-- Quick Date Filter Pills -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button type="button" onclick="setBlockersQuickRange('all')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:border-rose-400 transition">همه زمان‌ها</button>
+            <button type="button" onclick="setBlockersQuickRange('month')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:border-rose-400 transition">این ماه</button>
+            <button type="button" onclick="setBlockersQuickRange('30days')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:border-rose-400 transition">۳۰ روز اخیر</button>
+            <button type="button" onclick="setBlockersQuickRange('7days')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:border-rose-400 transition">۷ روز اخیر</button>
+          </div>
+
+          <!-- Search keyword -->
+          <div class="relative flex-1 min-w-[140px]">
+            <input type="text" id="blockers-search-input" onkeyup="filterBlockersList()" placeholder="جستجو در شرح چالش..." class="w-full bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 text-xs rounded-xl pr-7 pl-2.5 py-1.5 outline-none focus:border-rose-500">
+            <i class="fa-solid fa-search absolute right-2.5 top-2 text-slate-400 text-xs"></i>
+          </div>
+
+          <button onclick="filterBlockersList()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-filter"></i>
+            <span>اعمال</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Line -->
+      <div class="px-6 py-2 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
+        <span id="blockers-stats-count" class="font-bold text-slate-700 dark:text-slate-300">در حال محاسبه...</span>
+        <span id="blockers-date-badge" class="text-[11px] text-slate-500 dark:text-slate-400">بازه: -</span>
+      </div>
+
+      <!-- Blockers List Container -->
+      <div id="blockers-cards-container" class="p-6 space-y-4 overflow-y-auto flex-1 min-h-[300px] max-h-[500px]">
+        <!-- Dynamic Cards -->
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-3.5 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs">
+        <button onclick="copyBlockersText()" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:border-slate-400 text-slate-700 dark:text-slate-200 rounded-xl font-medium transition flex items-center gap-1.5">
+          <i class="fa-regular fa-copy"></i>
+          <span>کپی لیست چالش‌ها</span>
+        </button>
+        <button onclick="closeBlockersModal()" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-500">بستن</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK COMMAND PALETTE MODAL (Ctrl + K) -->
+  <div id="modal-command-palette" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-start justify-center hidden p-4 sm:p-10">
+    <div class="bg-white dark:bg-slate-800 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 animate-glow">
+      <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3">
+        <i class="fa-solid fa-magnifying-glass text-slate-400 text-lg mr-2"></i>
+        <input type="text" id="cmd-palette-input" onkeyup="filterCommandPalette()" placeholder="جستجوی سریع کارها، تعاملات، روتین‌ها... (مثلاً: روتین، کار جدید)" class="w-full bg-transparent text-slate-800 dark:text-white text-sm outline-none font-medium">
+        <button onclick="closeCommandPalette()" class="text-xs bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 px-2.5 py-1 rounded-lg">Esc</button>
+      </div>
+
+      <div class="p-3 max-h-80 overflow-y-auto space-y-1 text-xs" id="cmd-palette-results">
+        <div class="px-3 py-1.5 font-bold text-slate-400 text-[10px] uppercase tracking-wider">اقدامات سریع</div>
+        <div onclick="openTaskModal(); closeCommandPalette();" class="p-2.5 rounded-xl hover:bg-indigo-50 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer group transition">
+          <div class="flex items-center gap-2.5 text-slate-800 dark:text-slate-200">
+            <i class="fa-solid fa-plus-circle text-indigo-600 dark:text-indigo-400 text-base"></i>
+            <span class="font-bold">ایجاد کار جدید</span>
+          </div>
+          <kbd class="bg-slate-100 dark:bg-slate-900 text-slate-500 px-2 py-0.5 rounded text-[10px] font-mono">Alt + T</kbd>
+        </div>
+        <div onclick="openRoutineModal(); closeCommandPalette();" class="p-2.5 rounded-xl hover:bg-purple-50 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer group transition">
+          <div class="flex items-center gap-2.5 text-slate-800 dark:text-slate-200">
+            <i class="fa-solid fa-arrows-rotate text-purple-600 dark:text-purple-400 text-base"></i>
+            <span class="font-bold">ایجاد روتین روزانه جدید</span>
+          </div>
+        </div>
+        <div onclick="openReportModal(); closeCommandPalette();" class="p-2.5 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer group transition">
+          <div class="flex items-center gap-2.5 text-slate-800 dark:text-slate-200">
+            <i class="fa-solid fa-file-pen text-emerald-600 dark:text-emerald-400 text-base"></i>
+            <span class="font-bold">ثبت گزارش کار امروز</span>
+          </div>
+          <kbd class="bg-slate-100 dark:bg-slate-900 text-slate-500 px-2 py-0.5 rounded text-[10px] font-mono">Alt + R</kbd>
+        </div>
+        <div onclick="openInteractionModal(); closeCommandPalette();" class="p-2.5 rounded-xl hover:bg-amber-50 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer group transition">
+          <div class="flex items-center gap-2.5 text-slate-800 dark:text-slate-200">
+            <i class="fa-solid fa-comments text-amber-600 dark:text-amber-400 text-base"></i>
+            <span class="font-bold">ثبت تعامل جدید</span>
+          </div>
+          <kbd class="bg-slate-100 dark:bg-slate-900 text-slate-500 px-2 py-0.5 rounded text-[10px] font-mono">Alt + I</kbd>
+        </div>
+
+        <div class="px-3 py-1.5 font-bold text-slate-400 text-[10px] uppercase tracking-wider mt-2">ناوبری و تنظیمات</div>
+        <div onclick="switchTab('dashboard'); closeCommandPalette();" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2.5 text-slate-800 dark:text-slate-200 cursor-pointer">
+          <i class="fa-solid fa-chart-pie text-indigo-500"></i>
+          <span>رفتن به داشبورد</span>
+        </div>
+        <div onclick="switchTab('tasks'); closeCommandPalette();" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2.5 text-slate-800 dark:text-slate-200 cursor-pointer">
+          <i class="fa-solid fa-list-ul text-indigo-500"></i>
+          <span>مشاهده کارها و وظایف</span>
+        </div>
+        <div onclick="switchTab('routines'); closeCommandPalette();" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2.5 text-slate-800 dark:text-slate-200 cursor-pointer">
+          <i class="fa-solid fa-arrows-rotate text-purple-500"></i>
+          <span>مشاهده روتین‌های روزانه</span>
+        </div>
+        <div onclick="toggleDarkMode(); closeCommandPalette();" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2.5 text-slate-800 dark:text-slate-200 cursor-pointer">
+          <i class="fa-solid fa-moon text-amber-500"></i>
+          <span>تغییر حالت شب / روز (Dark Mode)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOOGLE DRIVE SYNC SETTINGS MODAL -->
+  <div id="modal-gdrive-sync" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white dark:bg-slate-800 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]">
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-indigo-50/50 dark:bg-slate-800/80">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+            <i class="fa-brands fa-google-drive text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800 dark:text-white text-base">همگام‌سازی ابری با گوگل درایو شخصی</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">سینک خودکار و امن بدون نیاز به سرور (Zero-Server)</p>
+          </div>
+        </div>
+        <button onclick="GDriveSync.closeSyncModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg cursor-pointer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="p-6 overflow-y-auto space-y-4 text-xs">
+        <!-- Info Banner -->
+        <div class="bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl p-4 text-indigo-900 dark:text-indigo-200 leading-relaxed">
+          <div class="font-bold flex items-center gap-2 mb-1 text-sm">
+            <i class="fa-solid fa-shield-halved text-indigo-600 dark:text-indigo-400"></i>
+            اطلاعات شما ۱۰۰٪ در اختیار خودتان
+          </div>
+          داده‌های این سامانه منحصراً در فایل <code class="font-mono bg-white/70 dark:bg-slate-900/60 px-1.5 py-0.5 rounded text-[11px]">leadapp_database.json</code> در گوگل درایو شخصی شما ذخیره می‌شوند و هیچ سرور واسطی وجود ندارد.
+        </div>
+
+        <!-- Last Sync Status -->
+        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-700">
+          <span class="text-slate-500 dark:text-slate-400 font-medium">آخرین زمان همگام‌سازی موفق:</span>
+          <span id="gdrive-last-sync-modal" class="font-bold text-slate-800 dark:text-slate-200 font-mono">تاکنون انجام نشده</span>
+        </div>
+
+        <!-- Webhook Input -->
+        <div class="space-y-1.5">
+          <label class="block font-bold text-slate-700 dark:text-slate-300">
+            آدرس وب‌هوک گوگل درایو شما (Google Apps Script Web App URL):
+          </label>
+          <input type="url" id="gdrive-webhook-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 dark:text-slate-100 outline-none font-mono focus:border-indigo-500">
+        </div>
+
+        <!-- Auto Sync Options -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-750">
+            <input type="checkbox" id="gdrive-auto-sync" class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
+            <span class="font-medium text-slate-700 dark:text-slate-200">همگام‌سازی خودکار در پس‌زمینه</span>
+          </label>
+          <div class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+            <span class="text-slate-600 dark:text-slate-300">هر</span>
+            <input type="number" id="gdrive-sync-interval" min="2" max="120" value="10" class="w-16 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-center font-bold text-indigo-600 outline-none">
+            <span class="text-slate-600 dark:text-slate-300">دقیقه یک‌بار</span>
+          </div>
+        </div>
+
+        <!-- 3-Step Setup Guide -->
+        <div class="border-t border-slate-200 dark:border-slate-700 pt-3 space-y-2">
+          <div class="font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between">
+            <span>راهنمای راه‌اندازی در ۲ دقیقه (یک‌بار برای همیشه):</span>
+            <button onclick="GDriveSync.copyAppsScriptCode()" class="text-xs text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 font-medium flex items-center gap-1 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-indigo-800 cursor-pointer">
+              <i class="fa-solid fa-copy"></i>
+              <span>کپی کد اسکریپت آماده</span>
+            </button>
+          </div>
+          <ol class="space-y-2 text-slate-600 dark:text-slate-400 leading-relaxed pr-1">
+            <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">۱</span><span>وارد آدرس <a href="https://script.google.com" target="_blank" class="text-indigo-600 dark:text-indigo-400 underline font-mono font-bold">script.google.com</a> شوید و روی <b>New project</b> کلیک کنید.</span></li>
+            <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">۲</span><span>کد آماده بالا را کپی کرده، کل محتوای ادیتور را با آن جایگزین کنید و دکمه ذخیره (آیکون فلاپی) را بزنید.</span></li>
+            <li class="bg-amber-50 dark:bg-amber-950/40 p-2.5 rounded-xl border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs">
+              ⚠️ <b>مرحله کلیدی (رفع خطای ۴۰۳ و CORS):</b> روی دکمه آبی <b>Deploy > New deployment</b> (یا Manage deployments) بزنید. نوع را <b>Web app</b> انتخاب کرده و گزینه <b>Who has access</b> (چه کسی دسترسی دارد) را حتماً روی <b>Anyone</b> (هر کسی) قرار دهید.
+            </li>
+            <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">۳</span><span>لینک ارائه‌شده در بخش <b>Web app URL</b> را کپی کرده و در کادر بالا قرار دهید.</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/80">
+        <button onclick="GDriveSync.sync()" class="px-4 py-2 rounded-xl text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 flex items-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span>تست و همگام‌سازی دستی</span>
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="GDriveSync.closeSyncModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">انصراف</button>
+          <button onclick="GDriveSync.saveModalSettings()" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm cursor-pointer">ذخیره و همگام‌سازی</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Routine Alarm / Alert Popup Modal -->
+  <div id="modal-routine-alert" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-purple-200 dark:border-purple-900 text-center space-y-4">
+      <div class="w-16 h-16 bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 rounded-3xl mx-auto flex items-center justify-center text-3xl shadow-inner">
+        <i class="fa-solid fa-bell animate-pulse"></i>
+      </div>
+      <div>
+        <span class="text-xs font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/40 px-3 py-1 rounded-full">⏰ یادآوری روتین روزانه</span>
+        <h3 id="routine-alert-title" class="text-lg font-black text-slate-900 dark:text-white mt-2">عنوان روتین</h3>
+        <p id="routine-alert-notes" class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-3"></p>
+      </div>
+      <div class="grid grid-cols-2 gap-2.5 pt-2">
+        <button id="btn-routine-alert-done" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md">
+          <i class="fa-solid fa-check"></i>
+          <span>انجام دادم ✅</span>
+        </button>
+        <button onclick="closeRoutineAlertModal()" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-4 rounded-xl text-xs transition">
+          <span>متوجه شدم</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification & Mobile Setup Guide Modal -->
+  <div id="modal-notification-guide" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <!-- Header -->
+      <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-gradient-to-r from-purple-500/10 to-indigo-500/10">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-md">
+            <i class="fa-solid fa-bell"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-base">راهنمای نوتیفیکیشن در موبایل و آیفون</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">راهنمای کامل هشدارهای هوشمند و نصب اپلیکیشن</p>
+          </div>
+        </div>
+        <button onclick="closeNotificationGuideModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl p-1 cursor-pointer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        
+        <!-- Status Banner -->
+        <div class="bg-purple-50 dark:bg-purple-950/40 p-4 rounded-2xl border border-purple-200 dark:border-purple-800 flex items-start gap-3">
+          <i class="fa-solid fa-circle-check text-purple-600 dark:text-purple-400 text-base mt-0.5 shrink-0"></i>
+          <div class="space-y-1">
+            <h4 class="font-bold text-purple-900 dark:text-purple-200 text-xs">سیستم هشدار صوتی و لرزشی درون‌برنامه فعال است!</h4>
+            <p class="text-slate-600 dark:text-slate-400">
+              حتی بدون اجازه نوتیفیکیشن مرورگر، سیستم یادآوری با صدای زنگ 🔔، لرزش گوشی (ویبره) 📳 و کادر هشدار تصویری در زمان مقرر کار می‌کند.
+            </p>
+            <button onclick="sendTestNotification()" class="mt-2 inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] shadow-sm">
+              <i class="fa-solid fa-play"></i>
+              <span>تست صدا و لرزش همین حالا</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- iOS iPhone Section -->
+        <div class="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-850 space-y-2.5">
+          <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
+            <i class="fa-brands fa-apple text-slate-900 dark:text-white text-base"></i>
+            <span>چرا در آیفون (iOS) نوتیفیکیشن مستقیم اجازه نمی‌دهد؟</span>
+          </div>
+          <p class="text-slate-600 dark:text-slate-400">
+            شرکت اپل برای حفظ حریم خصوصی، نوتیفیکیشن‌های وب را درون تب‌های معمولی سافاری مسدود کرده است. طبق استاندارد اپل، برای عملکرد مانند اپلیکیشن نیتو:
+          </p>
+          <div class="space-y-2 pt-1 font-medium">
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px] shrink-0 font-bold mt-0.5">۱</span>
+              <span>در مرورگر Safari آیفون، روی آیکون <strong>اشتراک‌گذاری (Share - آیکون مربع با فلش رو به بالا)</strong> در نوار پایین بزنید.</span>
+            </div>
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px] shrink-0 font-bold mt-0.5">۲</span>
+              <span>منو را به پایین کشیده و گزینه <strong>«Add to Home Screen» (افزودن به صفحه اصلی)</strong> را انتخاب کنید.</span>
+            </div>
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px] shrink-0 font-bold mt-0.5">۳</span>
+              <span>در بالای صفحه روی <strong>Add</strong> بزنید. اپلیکیشن با آیکون اختصاصی روی صفحه گوشی ظاهر می‌شود.</span>
+            </div>
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px] shrink-0 font-bold mt-0.5">۴</span>
+              <span>برنامه را باز کنید؛ از این پس بدون نوار مرورگر و کاملاً مانند اپ نیتو اجرا خواهد شد!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Android & Local Wi-Fi Section -->
+        <div class="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-850 space-y-2.5">
+          <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
+            <i class="fa-brands fa-android text-emerald-600 text-base"></i>
+            <span>گوشی‌های اندروید (Chrome):</span>
+          </div>
+          <p class="text-slate-600 dark:text-slate-400">
+            در اتصال محلی وای‌فای (آدرس با IP)، کروم اجازه نوتیفیکیشن‌های سیستمی بالای گوشی را به دلیل عدم وجود HTTPS محدود می‌کند. برای تجربه نیتو:
+          </p>
+          <div class="space-y-1.5 font-medium">
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] shrink-0 font-bold mt-0.5">۱</span>
+              <span>در بالای کروم روی علامت ۳ نقطه بزنید.</span>
+            </div>
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] shrink-0 font-bold mt-0.5">۲</span>
+              <span>گزینه <strong>«نصب برنامه» (Install app)</strong> یا <strong>«افزودن به صفحه اصلی»</strong> را لمس کنید.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="p-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+        <button onclick="closeNotificationGuideModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">
+          متوجه شدم
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NATIVE MOBILE BOTTOM NAVIGATION BAR -->
+  <nav class="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200/80 dark:border-slate-800/80 px-2 py-1 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[calc(0.4rem+env(safe-area-inset-bottom,8px))]">
+    <button onclick="switchTab('dashboard')" id="bottom-nav-dashboard" class="bottom-nav-item active btn-tap">
+      <i class="fa-solid fa-chart-pie"></i>
+      <span>داشبورد</span>
+    </button>
+    <button onclick="switchTab('tasks')" id="bottom-nav-tasks" class="bottom-nav-item btn-tap relative">
+      <i class="fa-solid fa-list-check"></i>
+      <span>کارها</span>
+      <span id="badge-bottom-tasks-count" class="absolute top-0.5 right-2.5 bg-indigo-600 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold hidden">۰</span>
+    </button>
+    <!-- Center Floating Action Button (FAB) -->
+    <button onclick="openMobileAddSheet()" class="w-12 h-12 -mt-5 rounded-full bg-indigo-600 hover:bg-indigo-700 active:scale-90 text-white flex items-center justify-center shadow-lg shadow-indigo-600/40 text-lg transition-transform cursor-pointer border-2 border-white dark:border-slate-900 btn-tap" title="افزودن جدید">
+      <i class="fa-solid fa-plus"></i>
+    </button>
+    <button onclick="switchTab('routines')" id="bottom-nav-routines" class="bottom-nav-item btn-tap relative">
+      <i class="fa-solid fa-arrows-rotate"></i>
+      <span>روتین‌ها</span>
+      <span id="badge-bottom-routines-count" class="absolute top-0.5 right-2.5 bg-purple-600 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold hidden">۰</span>
+    </button>
+    <button onclick="openMobileMoreSheet()" id="bottom-nav-more" class="bottom-nav-item btn-tap relative">
+      <i class="fa-solid fa-ellipsis"></i>
+      <span>بخش‌ها</span>
+    </button>
+  </nav>
+
+  <!-- MOBILE ADD NEW BOTTOM SHEET -->
+  <div id="modal-mobile-add" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end justify-center hidden p-0" onclick="if(event.target === this) closeMobileAddSheet();">
+    <div class="bg-white dark:bg-slate-800 w-full rounded-t-3xl shadow-2xl p-5 border-t border-slate-200 dark:border-slate-700 max-h-[85vh] overflow-y-auto">
+      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto mb-4"></div>
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-slate-800 dark:text-white text-base">افزودن مورد جدید</h3>
+        <button onclick="closeMobileAddSheet()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg p-1 cursor-pointer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="closeMobileAddSheet(); openTaskModal();" class="p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-800/60 flex flex-col items-center justify-center text-center gap-2 btn-tap cursor-pointer">
+          <div class="w-11 h-11 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-sm">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+          <span class="font-bold text-xs text-indigo-900 dark:text-indigo-200">کار و وظیفه</span>
+        </button>
+
+        <button onclick="closeMobileAddSheet(); openRoutineModal();" class="p-4 rounded-2xl bg-purple-50/80 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-800/60 flex flex-col items-center justify-center text-center gap-2 btn-tap cursor-pointer">
+          <div class="w-11 h-11 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-sm">
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </div>
+          <span class="font-bold text-xs text-purple-900 dark:text-purple-200">روتین روزانه</span>
+        </button>
+
+        <button onclick="closeMobileAddSheet(); openReportModal();" class="p-4 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-800/60 flex flex-col items-center justify-center text-center gap-2 btn-tap cursor-pointer">
+          <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-lg shadow-sm">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <span class="font-bold text-xs text-emerald-900 dark:text-emerald-200">گزارش کار</span>
+        </button>
+
+        <button onclick="closeMobileAddSheet(); openInteractionModal();" class="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-100 dark:border-amber-800/60 flex flex-col items-center justify-center text-center gap-2 btn-tap cursor-pointer">
+          <div class="w-11 h-11 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg shadow-sm">
+            <i class="fa-solid fa-address-book"></i>
+          </div>
+          <span class="font-bold text-xs text-amber-900 dark:text-amber-200">ثبت تعامل</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE MORE OPTIONS BOTTOM SHEET -->
+  <div id="modal-mobile-more" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end justify-center hidden p-0" onclick="if(event.target === this) closeMobileMoreSheet();">
+    <div class="bg-white dark:bg-slate-800 w-full rounded-t-3xl shadow-2xl p-5 border-t border-slate-200 dark:border-slate-700 max-h-[85vh] overflow-y-auto">
+      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto mb-4"></div>
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-slate-800 dark:text-white text-base">امکانات و بخش‌های سامانه</h3>
+        <button onclick="closeMobileMoreSheet()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg p-1 cursor-pointer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Links on Mobile -->
+      <div class="space-y-1 text-xs">
+        <div class="font-bold text-slate-400 text-[11px] px-2 py-1 uppercase">بخش‌های اصلی</div>
+        <div onclick="switchTab('reports'); closeMobileMoreSheet();" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer btn-tap">
+          <div class="flex items-center gap-3 text-slate-800 dark:text-slate-100 font-medium">
+            <i class="fa-solid fa-book-bookmark text-emerald-600 text-base"></i>
+            <span>گزارش‌های روزانه</span>
+          </div>
+          <i class="fa-solid fa-chevron-left text-slate-400 text-xs"></i>
+        </div>
+
+        <div onclick="switchTab('interactions'); closeMobileMoreSheet();" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer btn-tap">
+          <div class="flex items-center gap-3 text-slate-800 dark:text-slate-100 font-medium">
+            <i class="fa-solid fa-address-book text-amber-600 text-base"></i>
+            <span>ثبت و پیگیری تعاملات</span>
+          </div>
+          <i class="fa-solid fa-chevron-left text-slate-400 text-xs"></i>
+        </div>
+
+        <div class="font-bold text-slate-400 text-[11px] px-2 pt-3 pb-1 uppercase border-t border-slate-100 dark:border-slate-700 mt-2">ابزارها و امکانات</div>
+
+        <div onclick="closeMobileMoreSheet(); openArchiveManagerModal();" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer btn-tap">
+          <div class="flex items-center gap-3 text-slate-800 dark:text-slate-100 font-medium">
+            <i class="fa-solid fa-box-archive text-indigo-600 text-base"></i>
+            <span>صندوق آرشیو</span>
+          </div>
+          <span id="badge-mobile-archived-count" class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold hidden">۰</span>
+        </div>
+
+        <div onclick="closeMobileMoreSheet(); openFinishPeriodModal();" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer btn-tap">
+          <div class="flex items-center gap-3 text-amber-700 dark:text-amber-400 font-medium">
+            <i class="fa-solid fa-flag-checkered text-amber-600 text-base"></i>
+            <span>اتمام دوره کاری</span>
+          </div>
+          <i class="fa-solid fa-chevron-left text-slate-400 text-xs"></i>
+        </div>
+
+        <div onclick="closeMobileMoreSheet(); GDriveSync.openSyncModal();" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer btn-tap">
+          <div class="flex items-center gap-3 text-indigo-600 dark:text-indigo-400 font-medium">
+            <i class="fa-brands fa-google-drive text-base"></i>
+            <span>تنظیمات همگام‌سازی گوگل درایو</span>
+          </div>
+          <i class="fa-solid fa-chevron-left text-slate-400 text-xs"></i>
+        </div>
+
+        <div onclick="closeMobileMoreSheet(); downloadBackup();" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer btn-tap">
+          <div class="flex items-center gap-3 text-slate-800 dark:text-slate-100 font-medium">
+            <i class="fa-solid fa-download text-indigo-600 text-base"></i>
+            <span>دریافت نسخه پشتیبان (Backup)</span>
+          </div>
+          <i class="fa-solid fa-chevron-left text-slate-400 text-xs"></i>
+        </div>
+
+        <div onclick="closeMobileMoreSheet(); openCommandPalette();" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between cursor-pointer btn-tap">
+          <div class="flex items-center gap-3 text-slate-800 dark:text-slate-100 font-medium">
+            <i class="fa-solid fa-magnifying-glass text-indigo-600 text-base"></i>
+            <span>جستجوی سریع (Ctrl+K)</span>
+          </div>
+          <i class="fa-solid fa-chevron-left text-slate-400 text-xs"></i>
+        </div>
+
+        <div onclick="closeMobileMoreSheet(); openClearDataStep1();" class="p-3 rounded-2xl hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center justify-between cursor-pointer btn-tap text-rose-600 dark:text-rose-400">
+          <div class="flex items-center gap-3 font-medium">
+            <i class="fa-solid fa-trash-can text-base"></i>
+            <span>پاکسازی تمامی اطلاعات</span>
+          </div>
+          <i class="fa-solid fa-chevron-left text-rose-400 text-xs"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-20 sm:bottom-5 left-5 z-50 space-y-2"></div>
+
+  <!-- Scripts -->
+  <script src="js/shamsi.js"></script>
+  <script src="js/data-engine.js"></script>
+  <script src="js/gdrive-sync.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Register Service Worker for offline PWA capabilities
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('✅ Service Worker registered with scope:', reg.scope);
+        }).catch((err) => {
+          console.warn('⚠️ Service Worker registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

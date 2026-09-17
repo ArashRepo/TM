@@ -1,0 +1,17 @@
+﻿# Local Database (Keep Private)
+data/
+data/*.json
+
+# Node Modules & Logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Update Zip
+LeadApp_Update.zip

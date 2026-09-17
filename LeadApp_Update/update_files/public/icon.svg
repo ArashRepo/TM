@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  
+  <!-- Base Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  
+  <!-- Inner Card -->
+  <rect x="64" y="64" width="384" height="384" rx="64" fill="#ffffff" fill-opacity="0.08" filter="url(#dropShadow)"/>
+  
+  <!-- Checkmark Badge -->
+  <circle cx="256" cy="200" r="90" fill="url(#accentGrad)"/>
+  
+  <!-- Check Icon inside Badge -->
+  <path d="M210 200 L242 232 L306 168" fill="none" stroke="#ffffff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- App Title "TM" -->
+  <text x="256" y="380" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="72" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="4">TM</text>
+  
+  <!-- Subtitle / Indicator Dots -->
+  <circle cx="216" cy="415" r="7" fill="#38bdf8"/>
+  <circle cx="256" cy="415" r="7" fill="#818cf8"/>
+  <circle cx="296" cy="415" r="7" fill="#a855f7"/>
+</svg>

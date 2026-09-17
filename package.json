@@ -1,0 +1,24 @@
+{
+  "name": "TM-persian-tracker",
+  "version": "1.0.0",
+  "description": "اپلیکیشن استندالون فارسی مدیریت کارها، گزارش‌های روزانه و تعاملات",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "keywords": [
+    "tasks",
+    "persian",
+    "journal",
+    "interactions",
+    "crm",
+    "todo"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
