@@ -46,20 +46,44 @@ input, textarea, select, button, optgroup, kbd {
 }
 
 /* Global Form Controls & Text Inputs Light/Dark styling */
-input:not([type="checkbox"]):not([type="radio"]),
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 textarea,
 select {
   color: #0f172a;
-  background-color: #ffffff;
+  background-color: #f8fafc;
 }
 
-.dark input:not([type="checkbox"]):not([type="radio"]),
+/* =====================================================
+   DARK MODE — Forms, Modals, Cards (iOS Safe)
+   Uses !important to override Tailwind & WebKit defaults
+   ===================================================== */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .dark textarea,
 .dark select {
-  color: #f8fafc !important;
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+  -webkit-text-fill-color: #f1f5f9 !important; /* iOS Safari fix */
 }
+
+/* Modal content boxes background — dark mode */
+.dark .bg-white {
+  background-color: #1e293b !important;
+}
+/* Slightly lighter variant for modal headers */
+.dark .bg-slate-50 {
+  background-color: #0f172a !important;
+}
+.dark .bg-slate-100 {
+  background-color: #1e293b !important;
+}
+
+/* Ensure all text inside dark modals is visible */
+.dark .text-slate-800 { color: #f1f5f9 !important; }
+.dark .text-slate-700 { color: #e2e8f0 !important; }
+.dark .text-slate-600 { color: #cbd5e1 !important; }
+.dark .text-slate-500 { color: #94a3b8 !important; }
+
 
 /* Explicit text contrast rules for dark and light */
 body:not(.dark) {
