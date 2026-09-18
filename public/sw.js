@@ -1,5 +1,5 @@
 // TM Progressive Web App Service Worker
-const CACHE_NAME = 'tm-app-cache-v5';
+const CACHE_NAME = 'tm-app-cache-v6';
 
 const STATIC_ASSETS = [
   './',
@@ -61,42 +61,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 1. Navigation Requests (HTML Pages): Instant Offline Cache-First with Background Revalidation
+  // 1. Navigation Requests (HTML Pages): Network-First with Offline Fallback
   if (event.request.mode === 'navigate') {
     event.respondWith(
       (async () => {
-        const indexUrl = new URL('index.html', self.registration.scope).toString();
-        const rootUrl = self.registration.scope;
-
-        // Check cache first for instant 0.05s offline launch
-        const cached = (await caches.match(event.request)) || 
-                       (await caches.match(indexUrl)) || 
-                       (await caches.match(rootUrl)) ||
-                       (await caches.match('./index.html')) || 
-                       (await caches.match('/index.html'));
-        if (cached) {
-          // Revalidate in background if online
-          fetch(event.request).then(async (networkRes) => {
-            if (networkRes && networkRes.status === 200) {
-              const cache = await caches.open(CACHE_NAME);
-              cache.put(event.request, networkRes.clone());
-              cache.put(indexUrl, networkRes);
-            }
-          }).catch(() => {});
-          return cached;
-        }
-
-        // Not in cache: fetch from network and cache
         try {
           const networkRes = await fetch(event.request);
           if (networkRes && networkRes.status === 200) {
             const cache = await caches.open(CACHE_NAME);
             cache.put(event.request, networkRes.clone());
-            cache.put(indexUrl, networkRes.clone());
           }
           return networkRes;
         } catch (err) {
-          const fallback = (await caches.match(indexUrl)) || (await caches.match(rootUrl));
+          const indexUrl = new URL('index.html', self.registration.scope).toString();
+          const fallback = (await caches.match(event.request)) || (await caches.match(indexUrl)) || (await caches.match('./index.html'));
           if (fallback) return fallback;
           throw err;
         }

@@ -31,20 +31,20 @@ const STATUS_LABELS = {
 };
 
 const INTERACTION_TYPES = {
-  meeting: { text: 'جلسه', icon: 'fa-handshake', color: 'text-indigo-600' },
-  call: { text: 'تماس تلفنی', icon: 'fa-phone', color: 'text-blue-600' },
-  message: { text: 'پیام/چت', icon: 'fa-comment', color: 'text-emerald-600' },
-  email: { text: 'ایمیل', icon: 'fa-envelope', color: 'text-purple-600' },
-  in_person: { text: 'دیدار حضوری', icon: 'fa-user-group', color: 'text-amber-600' },
-  other: { text: 'سایر', icon: 'fa-asterisk', color: 'text-slate-600' }
+  meeting: { text: 'جلسه', icon: 'fa-handshake', color: 'text-indigo-600 dark:text-indigo-400' },
+  call: { text: 'تماس تلفنی', icon: 'fa-phone', color: 'text-blue-600 dark:text-blue-400' },
+  message: { text: 'پیام/چت', icon: 'fa-comment', color: 'text-emerald-600 dark:text-emerald-400' },
+  email: { text: 'ایمیل', icon: 'fa-envelope', color: 'text-purple-600 dark:text-purple-400' },
+  in_person: { text: 'دیدار حضوری', icon: 'fa-user-group', color: 'text-amber-600 dark:text-amber-400' },
+  other: { text: 'سایر', icon: 'fa-asterisk', color: 'text-slate-600 dark:text-slate-400' }
 };
 
 const OUTCOME_LABELS = {
-  answered: { text: 'پاسخ داد ✅', class: 'bg-emerald-100 text-emerald-800' },
-  no_answer: { text: 'پاسخ نداد 🚫', class: 'bg-rose-100 text-rose-800 font-bold' },
-  awaiting: { text: 'منتظر پاسخ ⏳', class: 'bg-amber-100 text-amber-800' },
-  successful: { text: 'موفق / توافق 🤝', class: 'bg-indigo-100 text-indigo-800 font-bold' },
-  cancelled: { text: 'عدم تمایل / رد ❌', class: 'bg-slate-200 text-slate-700' }
+  answered: { text: 'پاسخ داد ✅', class: 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300' },
+  no_answer: { text: 'پاسخ نداد 🚫', class: 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 font-bold' },
+  awaiting: { text: 'منتظر پاسخ ⏳', class: 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300' },
+  successful: { text: 'موفق / توافق 🤝', class: 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 font-bold' },
+  cancelled: { text: 'عدم تمایل / رد ❌', class: 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -461,12 +461,12 @@ async function renderDashRecentTasks() {
     
     if (!json.data || json.data.length === 0) {
       container.innerHTML = `
-        <div class="p-8 text-center bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
-          <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mx-auto mb-2">
+        <div class="p-8 text-center bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+          <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl mx-auto mb-2">
             <i class="fa-solid fa-circle-check"></i>
           </div>
-          <p class="text-xs font-bold text-slate-700">همه کارهای باز تکمیل شده‌اند! 🎉</p>
-          <p class="text-[11px] text-slate-400 mt-1">کار جدیدی ثبت نشده است.</p>
+          <p class="text-xs font-bold text-slate-700 dark:text-slate-200">همه کارهای باز تکمیل شده‌اند! 🎉</p>
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">کار جدیدی ثبت نشده است.</p>
         </div>
       `;
       return;
@@ -477,15 +477,15 @@ async function renderDashRecentTasks() {
       const priorityInfo = PRIORITY_LABELS[t.priority] || PRIORITY_LABELS.medium;
       const dateDisplay = t.dueDate ? Shamsi.formatShortDate(t.dueDate) : 'بدون تاریخ';
       return `
-        <div class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-indigo-50/40 border border-slate-100 hover:border-indigo-100 rounded-2xl transition-all cursor-pointer group" onclick="viewTaskDetails('${t.id}')">
+        <div class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-indigo-50/40 dark:bg-slate-800/60 dark:hover:bg-slate-700/60 border border-slate-100 hover:border-indigo-100 dark:border-slate-700 rounded-2xl transition-all cursor-pointer group" onclick="viewTaskDetails('${t.id}')">
           <div class="flex items-center gap-3">
-            <button onclick="event.stopPropagation(); quickToggleTask('${t.id}', 'completed')" class="w-6 h-6 rounded-lg border-2 border-slate-300 group-hover:border-indigo-600 flex items-center justify-center text-white hover:bg-indigo-600 transition shadow-sm" title="علامت‌گذاری به عنوان تکمیل شده">
+            <button onclick="event.stopPropagation(); quickToggleTask('${t.id}', 'completed')" class="w-6 h-6 rounded-lg border-2 border-slate-300 dark:border-slate-600 group-hover:border-indigo-600 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-white hover:bg-indigo-600 transition shadow-sm" title="علامت‌گذاری به عنوان تکمیل شده">
               <i class="fa-solid fa-check text-xs"></i>
             </button>
             <div>
-              <h4 class="text-xs font-bold text-slate-800 group-hover:text-indigo-700 transition">${t.title}</h4>
-              <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400">
-                <span class="bg-white px-2 py-0.5 rounded-md border border-slate-200 text-slate-600 font-medium">${t.category || 'عمومی'}</span>
+              <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">${t.title}</h4>
+              <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">
+                <span class="bg-white dark:bg-slate-700 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-medium">${t.category || 'عمومی'}</span>
                 <span>•</span>
                 <span><i class="fa-regular fa-calendar text-indigo-500 ml-1"></i>${dateDisplay}</span>
               </div>
@@ -504,12 +504,12 @@ function renderDashRecentInteractions(items) {
   const container = document.getElementById('dash-recent-interactions');
   if (!items || items.length === 0) {
     container.innerHTML = `
-      <div class="p-8 text-center bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
-        <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-xl mx-auto mb-2">
+      <div class="p-8 text-center bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+        <div class="w-12 h-12 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl mx-auto mb-2">
           <i class="fa-solid fa-handshake"></i>
         </div>
-        <p class="text-xs font-bold text-slate-700">هنوز تعاملی ثبت نشده است</p>
-        <p class="text-[11px] text-slate-400 mt-1">با کلیک روی «ثبت تعامل» تماس‌ها و جلسات خود را ثبت کنید.</p>
+        <p class="text-xs font-bold text-slate-700 dark:text-slate-200">هنوز تعاملی ثبت نشده است</p>
+        <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">با کلیک روی «ثبت تعامل» تماس‌ها و جلسات خود را ثبت کنید.</p>
       </div>
     `;
     return;
@@ -521,19 +521,19 @@ function renderDashRecentInteractions(items) {
     const initials = nameParts.length >= 2 ? (nameParts[0][0] + nameParts[1][0]) : i.contactName.substring(0, 2);
 
     return `
-      <div class="p-3.5 bg-slate-50 hover:bg-amber-50/40 border border-slate-100 hover:border-amber-200 rounded-2xl transition-all flex items-center justify-between cursor-pointer group" onclick="viewInteractionDetails('${i.id}')">
+      <div class="p-3.5 bg-slate-50 hover:bg-amber-50/40 dark:bg-slate-800/60 dark:hover:bg-slate-700/60 border border-slate-100 hover:border-amber-200 dark:border-slate-700 rounded-2xl transition-all flex items-center justify-between cursor-pointer group" onclick="viewInteractionDetails('${i.id}')">
         <div class="flex items-center gap-3 min-w-0">
-          <div class="w-9 h-9 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0">
+          <div class="w-9 h-9 rounded-xl bg-slate-800 dark:bg-slate-700 text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0 border border-slate-700 dark:border-slate-600">
             ${initials}
           </div>
           <div class="min-w-0">
-            <h4 class="text-xs font-bold text-slate-800 group-hover:text-amber-800 transition truncate">${i.contactName} ${i.company ? `<span class="text-[10px] text-slate-400 font-normal">(${i.company})</span>` : ''}</h4>
-            <p class="text-[11px] text-slate-500 truncate mt-0.5">${i.subject || i.notes || 'بدون موضوع'}</p>
+            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition truncate">${i.contactName} ${i.company ? `<span class="text-[10px] text-slate-400 font-normal">(${i.company})</span>` : ''}</h4>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">${i.subject || i.notes || 'بدون موضوع'}</p>
           </div>
         </div>
         <div class="text-left flex flex-col items-end gap-1 shrink-0 ml-2">
           <span class="badge ${outcomeInfo.class} text-[10px]">${outcomeInfo.text}</span>
-          <span class="text-[10px] text-slate-400">${Shamsi.formatShortDate(i.date)}</span>
+          <span class="text-[10px] text-slate-400 dark:text-slate-500">${Shamsi.formatShortDate(i.date)}</span>
         </div>
       </div>
     `;
@@ -611,30 +611,30 @@ function renderTasksTable(tasksList) {
     const statusInfo = STATUS_LABELS[t.status] || STATUS_LABELS.pending;
     const priorityInfo = PRIORITY_LABELS[t.priority] || PRIORITY_LABELS.medium;
     const isCompleted = t.status === 'completed';
-    const dateText = t.dueDate ? Shamsi.formatShortDate(t.dueDate) : '<span class="text-slate-300 font-normal">تعیین نشده</span>';
+    const dateText = t.dueDate ? Shamsi.formatShortDate(t.dueDate) : '<span class="text-slate-400 dark:text-slate-500 font-normal">تعیین نشده</span>';
 
     return `
-      <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="viewTaskDetails('${t.id}')">
+      <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer" onclick="viewTaskDetails('${t.id}')">
         <td class="py-3.5 px-4 text-center" onclick="event.stopPropagation()">
-          <button onclick="quickToggleTask('${t.id}', '${isCompleted ? 'pending' : 'completed'}')" class="w-5 h-5 rounded border ${isCompleted ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 hover:border-indigo-600 text-transparent'} flex items-center justify-center transition mx-auto" title="${isCompleted ? 'علامت‌گذاری به عنوان انجام نشده' : 'علامت‌گذاری به عنوان انجام شده'}">
+          <button onclick="quickToggleTask('${t.id}', '${isCompleted ? 'pending' : 'completed'}')" class="w-5 h-5 rounded border ${isCompleted ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 dark:border-slate-600 hover:border-indigo-600 text-slate-300 dark:text-slate-600 hover:text-indigo-600'} flex items-center justify-center transition mx-auto" title="${isCompleted ? 'علامت‌گذاری به عنوان انجام نشده' : 'علامت‌گذاری به عنوان انجام شده'}">
             <i class="fa-solid fa-check text-xs"></i>
           </button>
         </td>
 
         <td class="py-3.5 px-4">
-          <div class="font-bold text-slate-800 ${isCompleted ? 'line-through text-slate-400' : ''}">${t.title}</div>
-          ${t.description ? `<div class="text-xs text-slate-400 truncate max-w-sm">${t.description}</div>` : ''}
+          <div class="font-bold text-slate-800 dark:text-slate-100 ${isCompleted ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${t.title}</div>
+          ${t.description ? `<div class="text-xs text-slate-400 dark:text-slate-500 truncate max-w-sm">${t.description}</div>` : ''}
         </td>
 
-        <td class="py-3.5 px-4 text-slate-600 font-medium">
-          <span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg text-xs font-semibold">${t.category || 'عمومی'}</span>
+        <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">
+          <span class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg text-xs font-semibold">${t.category || 'عمومی'}</span>
         </td>
 
         <td class="py-3.5 px-4 text-center whitespace-nowrap">
           <span class="badge ${priorityInfo.class}">${priorityInfo.text}</span>
         </td>
 
-        <td class="py-3.5 px-4 text-center text-slate-700 font-medium whitespace-nowrap">
+        <td class="py-3.5 px-4 text-center text-slate-700 dark:text-slate-200 font-medium whitespace-nowrap">
           <i class="fa-regular fa-calendar-check text-indigo-500 ml-1"></i>
           ${dateText}
         </td>
@@ -645,12 +645,12 @@ function renderTasksTable(tasksList) {
 
         <td class="py-3.5 px-4 text-center whitespace-nowrap" onclick="event.stopPropagation()">
           <div class="flex items-center justify-center gap-2">
-            <button onclick="viewTaskDetails('${t.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
+            <button onclick="viewTaskDetails('${t.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
               <i class="fa-solid fa-eye"></i>
               <span>مشاهده</span>
             </button>
-            <button onclick="editTask('${t.id}')" class="p-1.5 hover:text-indigo-600 text-slate-400"><i class="fa-solid fa-pen"></i></button>
-            <button onclick="deleteTask('${t.id}')" class="p-1.5 hover:text-rose-600 text-slate-400"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="editTask('${t.id}')" class="p-1.5 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-400"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="deleteTask('${t.id}')" class="p-1.5 hover:text-rose-600 dark:hover:text-rose-400 text-slate-400"><i class="fa-solid fa-trash"></i></button>
           </div>
         </td>
       </tr>
@@ -1417,12 +1417,12 @@ function renderReportsTable(reportsList) {
   const paginatedReports = reportsList.slice(startIndex, startIndex + state.pageSize);
 
   tbody.innerHTML = paginatedReports.map(r => `
-    <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="viewReportDetails('${r.id}')">
-      <td class="py-3.5 px-4 font-bold text-slate-800 whitespace-nowrap">
+    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer" onclick="viewReportDetails('${r.id}')">
+      <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">
         <i class="fa-regular fa-calendar-days text-emerald-600 ml-2"></i>
         ${Shamsi.formatShortDate(r.date)}
       </td>
-      <td class="py-3.5 px-4 text-slate-600 max-w-md">
+      <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300 max-w-md">
         <div class="truncate font-medium">${r.summary}</div>
       </td>
       <td class="py-3.5 px-4 text-center text-amber-400 text-xs whitespace-nowrap" title="امتیاز: ${r.rating}">
@@ -1430,12 +1430,12 @@ function renderReportsTable(reportsList) {
       </td>
       <td class="py-3.5 px-4 text-center whitespace-nowrap" onclick="event.stopPropagation()">
         <div class="flex items-center justify-center gap-2">
-          <button onclick="viewReportDetails('${r.id}')" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
+          <button onclick="viewReportDetails('${r.id}')" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
             <i class="fa-solid fa-eye"></i>
             <span>مشاهده</span>
           </button>
-          <button onclick="editReport('${r.id}')" class="p-1.5 hover:text-indigo-600 text-slate-400"><i class="fa-solid fa-pen"></i></button>
-          <button onclick="deleteReport('${r.id}')" class="p-1.5 hover:text-rose-600 text-slate-400"><i class="fa-solid fa-trash"></i></button>
+          <button onclick="editReport('${r.id}')" class="p-1.5 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-400"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="deleteReport('${r.id}')" class="p-1.5 hover:text-rose-600 dark:hover:text-rose-400 text-slate-400"><i class="fa-solid fa-trash"></i></button>
         </div>
       </td>
     </tr>
@@ -1627,24 +1627,24 @@ function renderInteractionsTable(interactionsList) {
     const isDone = i.followUpStatus === 'done';
 
     return `
-      <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="viewInteractionDetails('${i.id}')">
+      <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer" onclick="viewInteractionDetails('${i.id}')">
         <td class="py-3.5 px-4 whitespace-nowrap">
-          <span class="inline-flex items-center gap-1.5 font-semibold text-slate-700">
+          <span class="inline-flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-200">
             <i class="fa-solid ${typeInfo.icon} ${typeInfo.color}"></i>
             ${typeInfo.text}
           </span>
         </td>
 
         <td class="py-3.5 px-4">
-          <div class="font-bold text-slate-800">${i.contactName}</div>
-          ${i.company ? `<div class="text-xs text-slate-400">${i.company}</div>` : ''}
+          <div class="font-bold text-slate-800 dark:text-slate-100">${i.contactName}</div>
+          ${i.company ? `<div class="text-xs text-slate-400 dark:text-slate-500">${i.company}</div>` : ''}
         </td>
 
-        <td class="py-3.5 px-4 max-w-xs truncate text-slate-600 font-medium">
+        <td class="py-3.5 px-4 max-w-xs truncate text-slate-600 dark:text-slate-300 font-medium">
           ${i.subject || i.notes || 'بدون موضوع'}
         </td>
 
-        <td class="py-3.5 px-4 text-center text-slate-600 font-medium whitespace-nowrap">
+        <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
           ${Shamsi.formatShortDate(i.date)}
         </td>
 
@@ -1654,21 +1654,21 @@ function renderInteractionsTable(interactionsList) {
 
         <td class="py-3.5 px-4 text-center whitespace-nowrap" onclick="event.stopPropagation()">
           ${i.followUpRequired ? `
-            <button onclick="toggleFollowUp('${i.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 mx-auto ${isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-800'}" title="کلیک برای تغییر وضعیت">
+            <button onclick="toggleFollowUp('${i.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 mx-auto ${isDone ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300'}" title="کلیک برای تغییر وضعیت">
               <i class="fa-solid ${isDone ? 'fa-circle-check' : 'fa-clock-rotate-left'}"></i>
               <span>${isDone ? 'پیگیری شد' : `پیگیری: ${Shamsi.formatShortDate(i.followUpDate)}`}</span>
             </button>
-          ` : '<span class="text-slate-300 text-xs">-</span>'}
+          ` : '<span class="text-slate-400 dark:text-slate-500 text-xs">-</span>'}
         </td>
 
         <td class="py-3.5 px-4 text-center whitespace-nowrap" onclick="event.stopPropagation()">
           <div class="flex items-center justify-center gap-2">
-            <button onclick="viewInteractionDetails('${i.id}')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
+            <button onclick="viewInteractionDetails('${i.id}')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/60 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
               <i class="fa-solid fa-eye"></i>
               <span>مشاهده</span>
             </button>
-            <button onclick="editInteraction('${i.id}')" class="p-1.5 hover:text-amber-600 text-slate-400"><i class="fa-solid fa-pen"></i></button>
-            <button onclick="deleteInteraction('${i.id}')" class="p-1.5 hover:text-rose-600 text-slate-400"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="editInteraction('${i.id}')" class="p-1.5 hover:text-amber-600 dark:hover:text-amber-400 text-slate-400"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="deleteInteraction('${i.id}')" class="p-1.5 hover:text-rose-600 dark:hover:text-rose-400 text-slate-400"><i class="fa-solid fa-trash"></i></button>
           </div>
         </td>
       </tr>
@@ -1966,8 +1966,49 @@ function initShortcuts() {
       e.preventDefault();
       e.stopPropagation();
       openInteractionModal();
+    } else if (e.altKey && (key === '1' || code === 'Digit1')) {
+      e.preventDefault();
+      switchTab('dashboard');
+    } else if (e.altKey && (key === '2' || code === 'Digit2')) {
+      e.preventDefault();
+      switchTab('tasks');
+    } else if (e.altKey && (key === '3' || code === 'Digit3')) {
+      e.preventDefault();
+      switchTab('routines');
+    } else if (e.altKey && (key === '4' || code === 'Digit4')) {
+      e.preventDefault();
+      switchTab('reports');
+    } else if (e.altKey && (key === '5' || code === 'Digit5')) {
+      e.preventDefault();
+      switchTab('interactions');
+    } else if (e.altKey && (key === 'arrowleft' || code === 'ArrowLeft')) {
+      e.preventDefault();
+      cycleNextTab();
+    } else if (e.altKey && (key === 'arrowright' || code === 'ArrowRight')) {
+      e.preventDefault();
+      cyclePrevTab();
+    } else if (key === '[' && !e.ctrlKey && !e.altKey) {
+      e.preventDefault();
+      cyclePrevTab();
+    } else if (key === ']' && !e.ctrlKey && !e.altKey) {
+      e.preventDefault();
+      cycleNextTab();
     }
   }, true);
+}
+
+function cycleNextTab() {
+  const tabs = ['dashboard', 'tasks', 'routines', 'reports', 'interactions'];
+  const currentIndex = tabs.indexOf(currentTab);
+  const nextIndex = (currentIndex + 1) % tabs.length;
+  switchTab(tabs[nextIndex]);
+}
+
+function cyclePrevTab() {
+  const tabs = ['dashboard', 'tasks', 'routines', 'reports', 'interactions'];
+  const currentIndex = tabs.indexOf(currentTab);
+  const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+  switchTab(tabs[prevIndex]);
 }
 
 function openCommandPalette() {
@@ -2077,13 +2118,13 @@ function setTasksView(view) {
     tableView.classList.add('hidden');
     kanbanView.classList.remove('hidden');
     btnKanban.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm';
-    btnTable.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900';
+    btnTable.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
     renderKanbanBoard(tasksCache);
   } else {
     kanbanView.classList.add('hidden');
     tableView.classList.remove('hidden');
     btnTable.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm';
-    btnKanban.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900';
+    btnKanban.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
   }
 }
 
@@ -2127,8 +2168,8 @@ function renderKanbanCards(tasksList) {
         <div class="pt-2 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px]">
           <span class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-semibold text-[10px]">${t.category || 'عمومی'}</span>
           <div class="flex items-center gap-1" onclick="event.stopPropagation()">
-            ${t.status !== 'completed' ? `<button onclick="quickToggleTask('${t.id}', 'completed')" class="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold">تکمیل ✅</button>` : ''}
-            ${t.status === 'pending' ? `<button onclick="quickToggleTask('${t.id}', 'in_progress')" class="px-2 py-0.5 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded text-[10px] font-bold">شروع ⏳</button>` : ''}
+            ${t.status !== 'completed' ? `<button onclick="quickToggleTask('${t.id}', 'completed')" class="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 rounded text-[10px] font-bold">تکمیل ✅</button>` : ''}
+            ${t.status === 'pending' ? `<button onclick="quickToggleTask('${t.id}', 'in_progress')" class="px-2 py-0.5 bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/60 text-sky-700 dark:text-sky-300 rounded text-[10px] font-bold">شروع ⏳</button>` : ''}
           </div>
         </div>
       </div>

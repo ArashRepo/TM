@@ -846,7 +846,10 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(500);
         return res.end('Server Error');
       }
-      res.writeHead(200, { 'Content-Type': contentType });
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      });
       res.end(content);
     });
   });
@@ -919,8 +922,18 @@ function getLocalIP() {
   return candidates[0] ? candidates[0].address : 'localhost';
 }
 
+let retryCount = 0;
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
+    retryCount++;
+    if (retryCount <= 5) {
+      console.log(`⏳ پورت ${PORT} در حال تخلیه است... تلاش مجدد (${retryCount}/5)...`);
+      setTimeout(() => {
+        try { server.close(); } catch (e) {}
+        server.listen(PORT, '0.0.0.0');
+      }, 1500);
+      return;
+    }
     console.error(`\n⚠️ خطا: پورت ${PORT} توسط اجرای قبلی همین برنامه یا نرم‌افزار دیگری اشغال شده است!`);
     console.error(`💡 راهکار: یک‌بار پنجره سیاه را ببندید و مجدداً فایل start.bat را باز کنید (پورت به صورت خودکار آزاد می‌شود).\n`);
     process.exit(1);
